@@ -1,5 +1,8 @@
+# Comprobación de certificados de CrossData
+
 Nos conectamos al crossdata (para lo que tendremos que ir al DC/OS y ver el nodo en el que se está ejecutando el XData.
-'''
+
+```
 jhicar@jhicar:~$ aliSebis 192.168.193.54@live.es
 DISCLAIMER: Your session is being recorded. Session ID: da082379-80cb-32ee-b0a9-585bd2a949ab
 [XE78726@agent-f1-38 LIVE02 ~]$ sudo su -
@@ -80,15 +83,6 @@ xd-doip-sandbox
 xd-prcm-sandbox
 xd-prcm-sandbox-client
 ...
-
-
-
-[root@gosec2 LIVE02 ~]# vault list userland/certificates/xd-prcm-sandbox
-No value found at userland/certificates/xd-prcm-sandbox/
-[root@gosec2 LIVE02 ~]# vault list userland/certificates/xd-prcm-sandbox-client
-No value found at userland/certificates/xd-prcm-sandbox-client/
-[root@gosec2 LIVE02 ~]# vault read userland/certificates/xd-prcm-sandobox
-No value found at userland/certificates/xd-prcm-sandobox
 [root@gosec2 LIVE02 ~]# vault read userland/certificates/xd-prcm-sandbox
 Key                	Value
 ---                	-----
@@ -98,3 +92,4 @@ xd-prcm-sandbox_key	-----BEGIN RSA PRIVATE KEY-----MIIEpAIBAAKCAQEA4cPKKBHLH+lb5
 
 [root@gosec2 LIVE02 ~]# 
 ```
+Estos certificados tendrían que coincidir con los que hay en id2pro (en el caso de live) o el id2
