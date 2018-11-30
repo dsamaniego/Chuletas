@@ -7,15 +7,18 @@ Me meto en el DC/OS y ve que el xd-kdco-sandbox está levantado, pero en los log
 
 Para ver el grupo, lo mejor meterse en el descriptor del XDATA y ahí se ve cual es el grupo.
 
-Además, se puede hacer el test que se hace cuando se despliega el xdata. (https://datiobd.atlassian.net/wiki/spaces/OP/pages/640352269/Despliegue+Crossdata+2.11.1-0.13.2)
+Además, se puede hacer el test que se hace cuando se despliega el xdata. [https://datiobd.atlassian.net/wiki/spaces/OP/pages/640352269/Despliegue+Crossdata+2.11.1-0.13.2]
 
 Para probar que está funcionando correctamente podemos subir una tabla de prueba a HDFS y luego crear una tabla en crossdata y hacer una consulta.
 
 1.- Subimos fichero prueba: CITY_CTR_SLS-parquet.tar.gz
-2.- Obtenemos el keytab del usuario de servicio de crossdata y lo guardamos en el cliente HDFS del entorno. (conectados a gosec)
-    ```vault read userland/kerberos/xd-doip-sandbox```
+
+2.- Obtenemos el keytab del usuario de servicio de crossdata y lo guardamos en el cliente HDFS del entorno. (conectados a gosec)    ```vault read userland/kerberos/xd-doip-sandbox```
+
 3.- Accedemos a cliente HDFS y guardamos le keytab: ```echo "XXXXX" | base64 -d > <usuario_servicio>.keytab```
+
 4.- Subimos el fichero de prueba al cliente HDFS, para ello lo subiremos a Nexus y descargaremos desde el cliente.
+
 ```
 $ wget https://nexus.daas.live.es.ether.igrupobbva/repository/things/TEST-CROSSDATA/CITY_CTR_SLS-parquet.tar.gz
 $ tar -zxvf CITY_CTR_SLS-parquet.tar.gz
