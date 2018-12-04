@@ -9,7 +9,7 @@
 * ¿Qué mirar en caso de caída?
 * [Juanitor](https://datiobd.atlassian.net/wiki/spaces/OP/pages/582320171/Juanitor.+Limpieza+recursos+reservados+en+Mesos) - Para cuando veamos que hay muchos recursos pillados en Mesos.
 * Mesos
-* Exhibitor: OJO, aquí se va si no hay mas remedio. (URL tipo: [https://daas.work.es.ether.igrupobbva/admin/exhibitor/])
+* Exhibitor: OJO, aquí se va si no hay mas remedio. (URL tipo: https://daas.work.es.ether.igrupobbva/admin/exhibitor/)
 * Reiniciar un contenedor:
     - Hay que conectarse a la máquina donde está corriendo el contenedor, lo identificamos con un `docker ps`y se hace un `docker restart <id>`.
 
