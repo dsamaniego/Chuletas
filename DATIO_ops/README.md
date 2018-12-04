@@ -1,4 +1,4 @@
-#Procedimientos de guardia.
+# Procedimientos de guardia.
 
 * [Levantar ordenadamente un entorno](https://datiobd.atlassian.net/wiki/spaces/OP/pages/126222470/Platform+boot+up+procedure).
     - **Reiniciar el exhibitor**:
