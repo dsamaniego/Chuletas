@@ -11,7 +11,7 @@
 Este comando es para poder visualizar y filtrar las salidas de comandos en formato json.
 Nos saca los PIDs del fichero ejemplo.json:
 
-*[{"exec_time": "2137811", "status": 1, "pid": "12947"}, {"exec_time": "2137741", "status": 1, "pid": "13702"}, {"exec_time": "2137700", "status": 1, "pid": "14443"}, {"exec_time": "2154915", "status": 1, "pid": "14845"}, {"exec_time": "2154720", "status": 1, "pid": "15839"}, {"exec_time": "2153510", "status": 1, "pid": "18062"}, {"exec_time": "2153450", "status": 1, "pid": "18834"}]*
+    *[{"exec_time": "2137811", "status": 1, "pid": "12947"}, {"exec_time": "2137741", "status": 1, "pid": "13702"}, {"exec_time": "2137700", "status": 1, "pid": "14443"}, {"exec_time": "2154915", "status": 1, "pid": "14845"}, {"exec_time": "2154720", "status": 1, "pid": "15839"}, {"exec_time": "2153510", "status": 1, "pid": "18062"}, {"exec_time": "2153450", "status": 1, "pid": "18834"}]*
 
 ```
 cat ejemplo.json | jq '.[]| {pid}'|grep pid|awk -F "\"" '{ print $4 }'
@@ -24,4 +24,4 @@ cat ejemplo.json | jq '.[]| {pid}'|grep pid|awk -F "\"" '{ print $4 }'
 18834
 ```
 ### Ver los logs de un servicio.
-```# journalctl -fu <servicio>``` 
+`# journalctl -fu <servicio>`
