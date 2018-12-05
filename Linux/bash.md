@@ -25,3 +25,5 @@ cat ejemplo.json | jq '.[]| {pid}'|grep pid|awk -F "\"" '{ print $4 }'
 ```
 ### Ver los logs de un servicio.
 `# journalctl -fu <servicio>`
+
+
