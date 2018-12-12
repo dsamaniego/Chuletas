@@ -66,7 +66,8 @@ HEKETI expone un API REST para hacer peticiones a gluster-FS.
 Las peticiones de volúmenes le llegan al POD de HEKETI que hace peticiones a los PODs de Gluster.
 
 # Usando OpenShift
-```bash
+Logarse en OpenShift
+~~~ bash
 [cloud-user@master ~]$ oc login -u system:admin
 Logged into "https://master.internal.aws.testdrive.openshift.com:443" as "system:admin" using existing credentials.
 
@@ -87,7 +88,10 @@ You have access to the following projects and can switch between them with 'oc p
     openshift-web-console
     storage
 
-Using project "default".
+Using project "default"
+~~~
+Obtener los nodos del cluster OpenShift
+~~~ bash
 [cloud-user@master ~]$ oc get nodes
 NAME                                          STATUS    ROLES     AGE       VERSION
 infra.internal.aws.testdrive.openshift.com    Ready     infra     38m       v1.11.0+d4cacc0
@@ -102,13 +106,16 @@ master.internal.aws.testdrive.openshift.com   Ready     master    42m       v1.1
 node01.internal.aws.testdrive.openshift.com   Ready     compute   39m       v1.11.0+d4cacc0
 node02.internal.aws.testdrive.openshift.com   Ready     compute   39m       v1.11.0+d4cacc0
 node03.internal.aws.testdrive.openshift.com   Ready     compute   39m       v1.11.0+d4cacc0
-```
+~~~
 
-Usando proyecto openshift-metrics:
+Cambiar a un proyecto:
+~~~ bash
 [cloud-user@master ~]$ oc project openshift-metrics 
 Now using project "openshift-metrics" on server "https://master.internal.aws.testdrive.openshift.com:443".
+~~~
 
-Obteniendo información del proyecto
+Obteniendo información del proyecto:
+~~~ bash
 [cloud-user@master ~]$ oc get all
 NAME                                 READY     STATUS    RESTARTS   AGE
 pod/prometheus-0                     6/6       Running   0          36m
@@ -134,11 +141,10 @@ NAME                                    HOST/PORT                               
 route.route.openshift.io/alertmanager   alertmanager-openshift-metrics.apps.179523625278.aws.testdrive.openshift.com             alertmanager   <all>     reencrypt     None
 route.route.openshift.io/alerts         alerts-openshift-metrics.apps.179523625278.aws.testdrive.openshift.com                   alerts         <all>     reencrypt     None
 route.route.openshift.io/prometheus     prometheus-openshift-metrics.apps.179523625278.aws.testdrive.openshift.com               prometheus     <all>     reencrypt     None
+~~~
 
-Describe el objeto:
-
-daemonset recursos de kubernetes.
-
+Describe el objeto de kubernetes daemonset:
+~~~ bash
 [cloud-user@master ~]$ oc describe daemonset  prometheus-node-exporter
 Name:           prometheus-node-exporter
 Selector:       app=prometheus-node-exporter,role=monitoring
@@ -191,20 +197,20 @@ Events:
   Normal  SuccessfulCreate  38m   daemonset-controller  Created pod: prometheus-node-exporter-5p7fr
   Normal  SuccessfulCreate  38m   daemonset-controller  Created pod: prometheus-node-exporter-v4bvl
   Normal  SuccessfulCreate  38m   daemonset-controller  Created pod: prometheus-node-exporter-n6hnb
-
+~~~
 
 sacar rutas:
-```bash
+~~~ bash
 [cloud-user@master ~]$ oc get routes
 NAME           HOST/PORT                                                                      PATH      SERVICES       PORT      TERMINATION   WILDCARD
 alertmanager   alertmanager-openshift-metrics.apps.179523625278.aws.testdrive.openshift.com             alertmanager   <all>     reencrypt     None
 alerts         alerts-openshift-metrics.apps.179523625278.aws.testdrive.openshift.com                   alerts         <all>     reencrypt     None
 prometheus     prometheus-openshift-metrics.apps.179523625278.aws.testdrive.openshift.com               prometheus     <all>     reencrypt     None
-```
+~~~
+
 el equipo de comunicaciones nos tendrá que poner el dns que apunte a *.apps.179523625278.aws.testdrive.openshift.com para que funcionen las cosas.
 
-
-Almacenamiento:
+## Almacenamiento:
 ~~~ bash
 [cloud-user@master ~]$ heketi-cli cluster list
 Clusters:
@@ -287,6 +293,9 @@ Cluster Id: 8c8d67d95da522094d691cd46f4132ac
 OJO: aunque está por triplicado, si se cae uno no podremos crear nuevos volúmenes, eso sí, los que estén seguiran estando.
 
 ## Aplicaciones en OpenShift
+
+Creamos un nuevo proyecto:
+~~~ bash
 [cloud-user@master ~]$ oc new-project app-management
 Now using project "app-management" on server "https://master.internal.aws.testdrive.openshift.com:443".
 
@@ -301,7 +310,10 @@ In project app-management on server https://master.internal.aws.testdrive.opensh
 
 You have no services, deployment configs, or build configs.
 Run 'oc new-app' to create an application.
-[cloud-user@master ~]$ ^C
+~~~
+
+Creamos una nueva aplicación:
+~~~ bash
 [cloud-user@master ~]$ oc new-app docker.io/siamaksade/mapit
 --> Found Docker image 9eca6ec (16 months old) from docker.io for "docker.io/siamaksade/mapit"
 
@@ -318,6 +330,7 @@ Run 'oc new-app' to create an application.
     Application is not exposed. You can expose services to the outside world by executing one or more of the commands below:
      'oc expose svc/mapit
     Run 'oc status' to view your app.
+~~~
 
 ### Rutas.
 para que funcione.
@@ -338,6 +351,7 @@ Hay que distinguir entre vivo (live) y listo (ready).
 Cualquier cambio en un DeployementConfig implica la muerte de los pods y el arranque de otros con el cambio aplicado.
 
 Meterse dentro de un POD:
+~~~ bash
 [cloud-user@master ~]$ oc get pods
 NAME            READY     STATUS    RESTARTS   AGE
 mapit-1-pdnmv   1/1       Running   0          39m
@@ -352,3 +366,4 @@ fe00::0	ip6-mcastprefix
 fe00::1	ip6-allnodes
 fe00::2	ip6-allrouters
 10.128.2.2	mapit-1-pdnmv
+~~~
