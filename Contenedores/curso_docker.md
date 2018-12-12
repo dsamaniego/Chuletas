@@ -19,7 +19,7 @@ Docker Engine, tiene tres componentes:
 * CLI (docker)
 
 *Docker Registry*: Servicio para almacenar imágenes.
-* Públicos [https://hub.docker.com]
+* Públicos: [Docker Hub](https://hub.docker.com)
 * Privados.
 
 ## Imágenes.
@@ -62,13 +62,16 @@ La idea es que nosotros arranquemos un contenedor y nos lo configuremos como que
 Hay que tener en cuenta, que cada comando que ejecutamos en el contenedor es una capa que añadimos al contenedor, lo que hace que sea más grande.
 Por ejemplo:
 ~~~ bash
-ose@amadablam:~/Docker$ sudo docker ps -a
+jose@amadablam:~/Docker$ sudo docker ps -a
 CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS                     PORTS               NAMES
 4fa665378183        eboraas/apache-php   "/usr/sbin/apache2ct…"   10 seconds ago      Up 9 seconds               80/tcp, 443/tcp     naughty_jackson
 b8f55f46a1c1        eboraas/apache-php   "/bin/bash"              6 minutes ago       Exited (0) 2 minutes ago                       vigilant_torvalds
 
 ~~~
-se@amadablam:~/Docker$ sudo docker start b8f55f46a1c1
+
+Arrancamos un contenedor:
+~~~bash
+jose@amadablam:~/Docker$ sudo docker start b8f55f46a1c1
 b8f55f46a1c1
 jose@amadablam:~/Docker$ sudo docker ps -a
 CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS               NAMES
