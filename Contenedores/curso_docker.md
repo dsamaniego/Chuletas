@@ -69,14 +69,8 @@ b8f55f46a1c1        eboraas/apache-php   "/bin/bash"              6 minutes ago 
 
 ~~~
 
-Arrancamos un contenedor:
+Creamos un contenedor nuevo:
 ~~~bash
-jose@amadablam:~/Docker$ sudo docker start b8f55f46a1c1
-b8f55f46a1c1
-jose@amadablam:~/Docker$ sudo docker ps -a
-CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS               NAMES
-4fa665378183        eboraas/apache-php   "/usr/sbin/apache2ct…"   2 minutes ago       Up 2 minutes        80/tcp, 443/tcp     naughty_jackson
-b8f55f46a1c1        eboraas/apache-php   "/bin/bash"              8 minutes ago       Up 5 seconds        80/tcp, 443/tcp     vigilant_torvalds
 jose@amadablam:~/Docker$ sudo docker commit -m "Añadido soporte Passenger" -a "José Hícar" b8f55f46a1c1 basajaun666/cursodocker/apache-php-passenger:latest
 sha256:fcad53f4eabe1db5ac727f5e08acb3a1261f566b5f214591f0c0d592788c9a09
 jose@amadablam:~/Docker$ sudo docker start b8f55f46a1c1
