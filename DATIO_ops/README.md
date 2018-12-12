@@ -13,5 +13,9 @@
 * Reiniciar un contenedor:
     - Hay que conectarse a la máquina donde está corriendo el contenedor, lo identificamos con un `docker ps`y se hace un `docker restart <id>`.
 
-Para conectarse a los DC/OS en plan emergencia, si es que no se llega con el usuario XE, hay un usuario _internaldeployer_ que nos permite conectarnos a todos lados.
+Para conectarse a los DC/OS en plan emergencia, si es que no se llega con el usuario XE, hay un usuario _internaldeployer_ que nos permite conectarnos a todos lados. Para ver la contraseña, nos conectamos al id2 y miramos en el entorno...
 
+Si hay algo que en los DC/OS no podamos ver bien, podemos subir el nivel de login metiendo la siguiente variable: 
+    "logging.level.com.datio.mesos.reporter": "DEBUG",
+
+curl https://pgmeme.

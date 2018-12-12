@@ -1,10 +1,18 @@
 # Alertas.
+Para poder tratar las alertas, el usuario nominal XE tiene que estár en el grupo de monitoriong correspondiente:
+LIVE_ES: DAESL_US_MNTEST
+LIVE_GL: DAGP_US_OPKDIT
+WORK_ES: DASD_US_MNKDIT
+WORK_GL: DAGD_US_MNFDEV
+
+Los permisos de work ya están asignados, pero los de LIVE me los tengo que asignar cada día.
+
 
 Tengo el repositorio en /home/jhicar/Repos/argos
-Las condiciones para que salten las alertas en **monitoring-kibana-1**, carpeta ```/usr/share/elastalert/real_rules/```
+Las condiciones para que salten las alertas en **monitoring-kibana-1**, carpeta `/usr/share/elastalert/real_rules/`
 
 ## hdfsclient sin espacio en /
-Revisar los ```/home``` de los usuarios que suelen dejar ficheros grandes en sus directorios de trabajo. En teoría, estos directorios serían para que dejasen ahí cosas que van a usar en sus ingestas, pero que tienen que pasar al Isilon, y sólo deberían estar ahí temporalmente.
+Revisar los `/home` de los usuarios que suelen dejar ficheros grandes en sus directorios de trabajo. En teoría, estos directorios serían para que dejasen ahí cosas que van a usar en sus ingestas, pero que tienen que pasar al Isilon, y sólo deberían estar ahí temporalmente.
 
 Lo mismo sería una buena idea tener un job que hiciese un barrido de esos directorios y hacer limpieza.
 
@@ -22,3 +30,11 @@ Nos va a devolver algo del estilo:
 ```
 <aquí metemos el json que devuevle.>
 ```
+## Chequeos en tiempo real.
+En todos los entornos hay una serie de ficheros que guardan el estado de ciertas cosas. Está en `/opt/monitoring/.tmp` podemos hacer un cat de los diferentes ficheros _*status_ para ver el estado del chequeo.
+
+## Alertas reactivas.
+Hay ciertas alertas que lanzan automáticamente jobs para arreglar el problema que ha levantado la alerta.
+
+Los jobs se ejecutan en Jenkins, y el job en concreto al que se invoca es **Ops --> ops_iluvatar**, en el histórico podemos ver lo que se ha lanzado.
+
