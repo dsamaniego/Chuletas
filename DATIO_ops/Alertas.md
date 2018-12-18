@@ -38,3 +38,11 @@ Hay ciertas alertas que lanzan automáticamente jobs para arreglar el problema q
 
 Los jobs se ejecutan en Jenkins, y el job en concreto al que se invoca es **Ops --> ops_iluvatar**, en el histórico podemos ver lo que se ha lanzado.
 
+# Serlock
+Es el que se encarga de la interacción con todo el login del SSO de todas las piezas... se comunica con **GOSECsso**, así que la alerta que salte seguramente vendrá de que se ha caído el GOSECsso.
+## Documentación
+* [Sherlock operation](https://datiobd.atlassian.net/wiki/spaces/MON/pages/1026293793/sherlock+operation?focusedCommentId=1049886724#comment-1049886724)
+* [Sherlogk erores](https://datiobd.atlassian.net/wiki/spaces/CPPR/pages/653525087/Sherlock+Errores)
+
+
+
