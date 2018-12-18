@@ -39,3 +39,5 @@ exit 0
 ~~~
 
 Lo metería en rc2.d, rc3.d, rc4.d y rc5.d como S90ctmag y en rc0.d y rc6.d como K10ctmag
+
+Hay que incluirlo en el playbook de ansible para Iluvatar y pasarlo al equipo PE (Product Engeneering).
