@@ -43,6 +43,7 @@ Es el que se encarga de la interacción con todo el login del SSO de todas las p
 ## Documentación
 * [Sherlock operation](https://datiobd.atlassian.net/wiki/spaces/MON/pages/1026293793/sherlock+operation?focusedCommentId=1049886724#comment-1049886724)
 * [Sherlogk erores](https://datiobd.atlassian.net/wiki/spaces/CPPR/pages/653525087/Sherlock+Errores)
+No están hablilitados estos servicios en esta máquina.
 
 
 
