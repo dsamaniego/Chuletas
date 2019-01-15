@@ -40,10 +40,14 @@ Los jobs se ejecutan en Jenkins, y el job en concreto al que se invoca es **Ops 
 
 # Serlock
 Es el que se encarga de la interacción con todo el login del SSO de todas las piezas... se comunica con **GOSECsso**, así que la alerta que salte seguramente vendrá de que se ha caído el GOSECsso.
+
+## Falsas alarmas.
+bootstrap-X_external_services_dnsbased_ha --> dnsbased-ha is down. --> Bug de monitoring, ya está arreglado en work pero no en live.
+agent-f1-182 --> Fallo de monitoring, no hacer caso.
+
 ## Documentación
 * [Sherlock operation](https://datiobd.atlassian.net/wiki/spaces/MON/pages/1026293793/sherlock+operation?focusedCommentId=1049886724#comment-1049886724)
 * [Sherlogk erores](https://datiobd.atlassian.net/wiki/spaces/CPPR/pages/653525087/Sherlock+Errores)
 No están hablilitados estos servicios en esta máquina.
-
 
 
