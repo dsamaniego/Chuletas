@@ -1,7 +1,7 @@
 # Alertas.
 Para poder tratar las alertas, el usuario nominal XE tiene que estár en el grupo de monitoriong correspondiente:
 * LIVE_ES: DASP_US_OPKDIT, DAESL_US_MNTEST
-* LIVE_GL: DAGP_US_OPKDIT, DAGP_US_OPKDIT
+* LIVE_GL: DAGP_US_OPKDIT
 * WORK_ES: DASD_US_OPKDIT, DASD_US_MNKDIT
 * WORK_GL: DAGD_US_OPKDIT, DAGD_US_MNFDEV
 

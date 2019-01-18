@@ -1,5 +1,6 @@
 # Openstack
 
+## Conexión
 Para conectarnos a openstack de un entorno...
 
 Nos conectamos a id2 por ssh y ahí nos conectamos al contenedor que esté ejecutando el ilúvatar.
@@ -104,3 +105,9 @@ _=/usr/bin/printenv
 | 4d2d2f35-2c7b-44bb-a19f-1b3120d2b9cf | monitoring-data-2   | SHUTOFF | net_infra=192.168.102.24                                               | RHEL7.3 | b1.large  |
 [root@daas-global-work-01 iluvatar]# 
 
+## Algunos comandos útiles.
+
+### Sacar las máquinas de una zona de disponiblidad
+``` bash
+ openstack server list --long | grep "TC-I-3" | awk '{print $4 }' | grep -v "agent-f"
+```

@@ -68,3 +68,97 @@ Usar una base de datos:
     (14 rows)
 ```
 Ahora mos las cosillas que queramos.
+
+## pgshared en estado inconsistente en Form01
+Nos hemos encontrado con que el pgshared está como master pg-0002 y los otros dos están mal.
+~~~ bash
+[cloud-user@bootstrap-1 FORM01 ~]$ ssh 192.168.192.127
+The authenticity of host '192.168.192.127 (192.168.192.127)' can't be established.
+ECDSA key fingerprint is ce:85:0e:f7:6e:e2:3b:f3:cc:5b:23:fb:55:5f:a1:c9.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.192.127' (ECDSA) to the list of known hosts.
+Last login: Fri Jan 11 10:20:19 2019 from 192.168.102.31
+[cloud-user@agent-94 FORM01 ~]$ curl 192.168.192.49:10113/v1/service/status
+{"status":[{"id":"pg-0002","role":"master","status":"RUNNING","dnsHostname":"pg-0002.pgshared.mss.form01.daas.gl.igrupobbva","assignedHost":"192.168.192.128","assignedZone":"TC-I-3","ports":[1025]},{"id":"DISCARDED-pg-0001","role":"sync_slave","status":"DISCARDED","dnsHostname":"DISCARDED-pg-0001.pgshared.mss.form01.daas.gl.igrupobbva","assignedHost":"192.168.192.104","assignedZone":"TC-I-2","ports":[1025]},{"id":"DISCARDED-pg-0001","role":"async_slave","status":"DISCARDED","dnsHostname":"DISCARDED-pg-0001.pgshared.mss.form01.daas.gl.igrupobbva","assignedHost":"192.168.192.98","assignedZone":"TC-I-2","ports":[1025]}]}[cloud-user@agent-94 FORM01 ~]$ curl 192.168.192.49:10113/v1/service/status|jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   625    0   625    0     0  99569      0 --:--:-- --:--:-- --:--:--  101k
+{
+  "status": [
+    {
+      "id": "pg-0002",
+      "role": "master",
+      "status": "RUNNING",
+      "dnsHostname": "pg-0002.pgshared.mss.form01.daas.gl.igrupobbva",
+      "assignedHost": "192.168.192.128",
+      "assignedZone": "TC-I-3",
+      "ports": [
+        1025
+      ]
+    },
+    {
+      "id": "DISCARDED-pg-0001",
+      "role": "sync_slave",
+      "status": "DISCARDED",
+      "dnsHostname": "DISCARDED-pg-0001.pgshared.mss.form01.daas.gl.igrupobbva",
+      "assignedHost": "192.168.192.104",
+      "assignedZone": "TC-I-2",
+      "ports": [
+        1025
+      ]
+    },
+    {
+      "id": "DISCARDED-pg-0001",
+      "role": "async_slave",
+      "status": "DISCARDED",
+      "dnsHostname": "DISCARDED-pg-0001.pgshared.mss.form01.daas.gl.igrupobbva",
+      "assignedHost": "192.168.192.98",
+      "assignedZone": "TC-I-2",
+      "ports": [
+        1025
+      ]
+    }
+  ]
+}
+~~~
+
+Hago Backup de la BB.DD. pgshared (desde el pg-0002), entrando en el contenedor: 
+
+~~~ bash
+# pg_dumpall -U postgres -h localhost -p 1025 > pgshared_form_20190117```
+# docker cp <id_cont>:pgshared_form_20190117 .
+# mv pgshared_form_20190117 /home/cloud-user
+# chown cloud-user /home/cloud-user/pgshared_form_20190117
+~~~
+
+Lo hago desde el propio pg-0002 que es el master:
+
+Primero hago un clean para quitar los discarded:
+~~~ bash
+[root@agent-94 FORM01 ~]# curl -XPOST 192.168.192.49:10113/v1/service/clean
+{"code":200,"component":"Framew192.168.192.49:10113/v1/service/status^C
+[root@agent-94 FORM01 ~]# curl 192.168.192.49:10113/v1/service/status|jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   199    0   199    0     0  26815      0 --:--:-- --:--:-- --:--:-- 33166
+{
+  "status": [
+    {
+      "id": "pg-0002",
+      "role": "master",
+      "status": "RUNNING",
+      "dnsHostname": "pg-0002.pgshared.mss.form01.daas.gl.igrupobbva",
+      "assignedHost": "192.168.192.128",
+      "assignedZone": "TC-I-3",
+      "ports": [
+        1025
+      ]
+    }
+  ]
+}
+~~~
+Como tenemos el pg-0002 como máster, nos tenemos que meter al exhibitor para que cambie a pg-0001.... 
+para eso, abrimos el exhibitor: nos vamos al pg-0002, abrimos el descriptor y cambiamos su nombre de pg-0002 a pg-0001
+
+Luego nos aparecerá como pg-0001 y tendremos que parar todos menos el pg que tenga la ip del pg-0002 antigüo y luego ir añadiendo el syincrono y el asíncrono
+
