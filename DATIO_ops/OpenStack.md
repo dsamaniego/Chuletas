@@ -105,6 +105,10 @@ _=/usr/bin/printenv
 | 4d2d2f35-2c7b-44bb-a19f-1b3120d2b9cf | monitoring-data-2   | SHUTOFF | net_infra=192.168.102.24                                               | RHEL7.3 | b1.large  |
 [root@daas-global-work-01 iluvatar]# 
 
+### Tennants id2
+Hay un contenedor (como root): (buscar con ctrl+r groot)
+docker run --rm -e OS_TENANT_NAME=DaaS_Es_DEV_01  -e OS_PASSWORD="BRr6+TpeviBzrXOG"  -e OS_AUTH_URL=https://rdlj2jvgawkf9m.api.es.iaas.igrupobbva/v2.0 -e OS_USERNAME=user_DaaS_Es_DEV_01 -ti -v /data:/data --entrypoint=/bin/bash nexus.daas.work.es.ether.igrupobbva/repository/es-docker/datio/groot:1.0.0
+
 ## Algunos comandos útiles.
 
 ### Sacar las máquinas de una zona de disponiblidad
