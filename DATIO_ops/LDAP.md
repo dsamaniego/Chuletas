@@ -1,5 +1,5 @@
 # LDAP
-Para conectarse al LDAP a través de la líena de comandos:
+Para conectarse al LDAP a través de la línea de comandos:
 
 Por ejemplo, para consultar un usuario:
 

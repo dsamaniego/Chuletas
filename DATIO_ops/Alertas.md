@@ -7,7 +7,6 @@ Para poder tratar las alertas, el usuario nominal XE tiene que estár en el grup
 
 Los permisos de work ya están asignados, pero los de LIVE me los tengo que asignar cada día.
 
-
 Tengo el repositorio en /home/jhicar/Repos/argos
 Las condiciones para que salten las alertas en **monitoring-kibana-1**, carpeta `/usr/share/elastalert/real_rules/`
 
@@ -32,6 +31,9 @@ Nos va a devolver algo del estilo:
 ```
 ## Chequeos en tiempo real.
 En todos los entornos hay una serie de ficheros que guardan el estado de ciertas cosas. Está en `/opt/monitoring/.tmp` podemos hacer un cat de los diferentes ficheros _*status_ para ver el estado del chequeo.
+
+### Canarios.
+Para chequear las piezas de plataforma, hay servicios para cada pieza que chequean periódicamente, cuando haya alertas de alguna pieza de plataforma, miramos en el DCOS los logs del canario (se llaman _mon<nomrepriza>_). Para ver el chequeo que ha fallado y poder tirar del hilo.
 
 ## Alertas reactivas.
 Hay ciertas alertas que lanzan automáticamente jobs para arreglar el problema que ha levantado la alerta.
