@@ -1,14 +1,7 @@
 # Curso Cloud-Native.
 
-[http://redhat.cloudnative.com]
-[https://github.com/openshift/openshift-cns-testdrive]
-
-## OpenShift
-* Multilenguaje.
-* Automatizable.
-* Basado en kubernetes, basado en estándares.
-* OpenSource.
-* Multitenant.
+* http://redhat.cloudnative.com
+* https://github.com/openshift/openshift-cns-testdrive
 
 ## Linux containers.
 * __De cara a infraestructuras__: Procesos de aplicación en un kernel compartido. Son ligeros y simples que mas VMs. Son portables.
@@ -31,16 +24,24 @@ Como los contenedores están formados por capas, las aplicaciones que usen las m
 Capa de intermediaria (proxy) entre kubernetes y el gestor de contenedores.
 OCI-compliant (Open Container Initiative)
 
-# OpenShift (Arquitectura)
-Un master con:
+## OpenShift
+Es una plataforma de RedHat:
+* Multilenguaje.
+* Automatizable.
+* Basado en kubernetes, basado en estándares.
+* OpenSource.
+* Multitenant.
+
+### Arquitectura
+Master balanceado con:
 * API/Autenticación
 * DataStore
 * Scheduler
 * Healt/Scaling
 
-Las aplicaciones corren en contenedores, que están dentro de pods para kubernetes.
+Las aplicaciones corren en contenedores, que están dentro de pods de kubernetes corriendo en los nodos
 
-Pod --> Entidad lógica que junta contenedores para dar soporte a una aplicación.
+**Pod**: Entidad lógica que junta contenedores para dar soporte a una aplicación.
 Los pods se levangan en los nodos (en el nodo que sea).
 
 El master es que que decide dónde se van los pods.
@@ -53,7 +54,7 @@ La capa de enrutamiento permite acceder desde fuera de nuestra infraestructura a
 
 Aceso via WEB, CLI, IDE y API.
 
-## Almacenamiento.
+### Almacenamiento.
 PVC -- PersistentVolumeClaim -- Petición de volumen persistente.
 SC -- StorageClass
 SB -- StorageBackend -- donde se crea el amacenamiento.
@@ -65,8 +66,9 @@ HEKETI expone un API REST para hacer peticiones a gluster-FS.
 
 Las peticiones de volúmenes le llegan al POD de HEKETI que hace peticiones a los PODs de Gluster.
 
-# Usando OpenShift
-Logarse en OpenShift
+## Usando OpenShift
+
+- Logarse en OpenShift
 ~~~ bash
 [cloud-user@master ~]$ oc login -u system:admin
 Logged into "https://master.internal.aws.testdrive.openshift.com:443" as "system:admin" using existing credentials.
@@ -90,7 +92,7 @@ You have access to the following projects and can switch between them with 'oc p
 
 Using project "default"
 ~~~
-Obtener los nodos del cluster OpenShift
+- Obtener los nodos del cluster OpenShift
 ~~~ bash
 [cloud-user@master ~]$ oc get nodes
 NAME                                          STATUS    ROLES     AGE       VERSION
@@ -108,13 +110,13 @@ node02.internal.aws.testdrive.openshift.com   Ready     compute   39m       v1.1
 node03.internal.aws.testdrive.openshift.com   Ready     compute   39m       v1.11.0+d4cacc0
 ~~~
 
-Cambiar a un proyecto:
+- Cambiar a un proyecto:
 ~~~ bash
 [cloud-user@master ~]$ oc project openshift-metrics 
 Now using project "openshift-metrics" on server "https://master.internal.aws.testdrive.openshift.com:443".
 ~~~
 
-Obteniendo información del proyecto:
+- Obteniendo información del proyecto:
 ~~~ bash
 [cloud-user@master ~]$ oc get all
 NAME                                 READY     STATUS    RESTARTS   AGE
@@ -143,7 +145,7 @@ route.route.openshift.io/alerts         alerts-openshift-metrics.apps.1795236252
 route.route.openshift.io/prometheus     prometheus-openshift-metrics.apps.179523625278.aws.testdrive.openshift.com               prometheus     <all>     reencrypt     None
 ~~~
 
-Describe el objeto de kubernetes daemonset:
+- Describe el objeto de kubernetes daemonset:
 ~~~ bash
 [cloud-user@master ~]$ oc describe daemonset  prometheus-node-exporter
 Name:           prometheus-node-exporter
@@ -199,7 +201,7 @@ Events:
   Normal  SuccessfulCreate  38m   daemonset-controller  Created pod: prometheus-node-exporter-n6hnb
 ~~~
 
-sacar rutas:
+- Sacar rutas:
 ~~~ bash
 [cloud-user@master ~]$ oc get routes
 NAME           HOST/PORT                                                                      PATH      SERVICES       PORT      TERMINATION   WILDCARD
@@ -210,7 +212,7 @@ prometheus     prometheus-openshift-metrics.apps.179523625278.aws.testdrive.open
 
 el equipo de comunicaciones nos tendrá que poner el dns que apunte a *.apps.179523625278.aws.testdrive.openshift.com para que funcionen las cosas.
 
-## Almacenamiento:
+- Almacenamiento:
 ~~~ bash
 [cloud-user@master ~]$ heketi-cli cluster list
 Clusters:
@@ -294,7 +296,7 @@ OJO: aunque está por triplicado, si se cae uno no podremos crear nuevos volúme
 
 ## Aplicaciones en OpenShift
 
-Creamos un nuevo proyecto:
+- Creamos un nuevo proyecto:
 ~~~ bash
 [cloud-user@master ~]$ oc new-project app-management
 Now using project "app-management" on server "https://master.internal.aws.testdrive.openshift.com:443".
@@ -312,7 +314,7 @@ You have no services, deployment configs, or build configs.
 Run 'oc new-app' to create an application.
 ~~~
 
-Creamos una nueva aplicación:
+- Creamos una nueva aplicación:
 ~~~ bash
 [cloud-user@master ~]$ oc new-app docker.io/siamaksade/mapit
 --> Found Docker image 9eca6ec (16 months old) from docker.io for "docker.io/siamaksade/mapit"
@@ -333,13 +335,12 @@ Creamos una nueva aplicación:
 ~~~
 
 ### Rutas.
-para que funcione.
+Para que funcione.
 
 El balanceador tiene que estar apuntado al 443 y al 80 y aceptar esos tráficos.
 En el dns la IP del balanceador tiene que corresponderse con *.aws....
 
 Así todo lo que llegue al balanceador llegará a los nodos con toda la cabecera.
-
 
 ### Procesos.
 Importante... hay veces (sobre todo en versiones antigüas, en que las aplicaciones tardan mucho en arrancar, y nuestro master lo está matando porque tarda maás que el tiempo prefijado.)
@@ -350,7 +351,7 @@ Hay que distinguir entre vivo (live) y listo (ready).
 
 Cualquier cambio en un DeployementConfig implica la muerte de los pods y el arranque de otros con el cambio aplicado.
 
-Meterse dentro de un POD:
+- Meterse dentro de un POD:
 ~~~ bash
 [cloud-user@master ~]$ oc get pods
 NAME            READY     STATUS    RESTARTS   AGE

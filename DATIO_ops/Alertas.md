@@ -1,9 +1,9 @@
 # Alertas.
 Para poder tratar las alertas, el usuario nominal XE tiene que estár en el grupo de monitoriong correspondiente:
-LIVE_ES: DAESL_US_MNTEST
-LIVE_GL: DAGP_US_OPKDIT
-WORK_ES: DASD_US_MNKDIT
-WORK_GL: DAGD_US_MNFDEV
+* LIVE_ES: DASP_US_OPKDIT, DAESL_US_MNTEST
+* LIVE_GL: DAGP_US_OPKDIT
+* WORK_ES: DASD_US_OPKDIT, DASD_US_MNKDIT
+* WORK_GL: DAGD_US_OPKDIT, DAGD_US_MNFDEV
 
 Los permisos de work ya están asignados, pero los de LIVE me los tengo que asignar cada día.
 
@@ -37,4 +37,17 @@ En todos los entornos hay una serie de ficheros que guardan el estado de ciertas
 Hay ciertas alertas que lanzan automáticamente jobs para arreglar el problema que ha levantado la alerta.
 
 Los jobs se ejecutan en Jenkins, y el job en concreto al que se invoca es **Ops --> ops_iluvatar**, en el histórico podemos ver lo que se ha lanzado.
+
+# Serlock
+Es el que se encarga de la interacción con todo el login del SSO de todas las piezas... se comunica con **GOSECsso**, así que la alerta que salte seguramente vendrá de que se ha caído el GOSECsso.
+
+## Falsas alarmas.
+bootstrap-X_external_services_dnsbased_ha --> dnsbased-ha is down. --> Bug de monitoring, ya está arreglado en work pero no en live.
+agent-f1-182 --> Fallo de monitoring, no hacer caso.
+
+## Documentación
+* [Sherlock operation](https://datiobd.atlassian.net/wiki/spaces/MON/pages/1026293793/sherlock+operation?focusedCommentId=1049886724#comment-1049886724)
+* [Sherlogk erores](https://datiobd.atlassian.net/wiki/spaces/CPPR/pages/653525087/Sherlock+Errores)
+No están hablilitados estos servicios en esta máquina.
+
 
