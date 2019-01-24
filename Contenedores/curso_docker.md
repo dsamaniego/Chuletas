@@ -67,7 +67,7 @@ CONTAINER ID        IMAGE                COMMAND                  CREATED       
 4fa665378183        eboraas/apache-php   "/usr/sbin/apache2ct…"   10 seconds ago      Up 9 seconds               80/tcp, 443/tcp     naughty_jackson
 b8f55f46a1c1        eboraas/apache-php   "/bin/bash"              6 minutes ago       Exited (0) 2 minutes ago                       vigilant_torvalds
 
-~~~
+~~~ bash
 se@amadablam:~/Docker$ sudo docker start b8f55f46a1c1
 b8f55f46a1c1
 jose@amadablam:~/Docker$ sudo docker ps -a
@@ -97,6 +97,13 @@ Una vez construida la imagen (siguiendo el método que sea), la podemos subir a 
 3. Nos logamos en docker hub: `docker login`
 4. Subimos la imagen: `docker push basajaun666/apache-php-passenger:latest`
 
-# Networking.
+## Networking.
+Al instalarse docker, se crean tres tipos de redes:
+- Bridge (_driver bridge_)-- la red por defecto.
+- Host (_driver host-)
+- none -> para aislar un contenedor sin red.
 
-# Almacenamiento.
+### Gestión de la red.
+- `docker network ls`
+
+## Almacenamiento.
