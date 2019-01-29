@@ -37,3 +37,12 @@ Si queremos controlar cómo va la ejecución: `docker logs --tail 10 -f <id_iluv
 Y lanzamos el tag de mesos_securize `ansible-playbook datio.yml -t eos-securize-mesos`
 
 Con esto, ya hemos acabado, ahora sólo falta comprobar que todo va bien conectándonos al DCOS y creando un proyecto de intelligence (eso ya se verá como)
+
+## Playbooks
+
+Dentor de Ilúvatar hay un montón de utilidades, sobre todo, hay dos directorios ./deployer/ansible/operations y ./deployer/ansible/playbooks
+
+para pasar una etiqueta de ilúvatar a una granja concreta:
+
+`touch /environment/.inventory_cache && ansible-playbook datio.yml -t pamldap -l dcos_agent_private`
+si queremos antes de hacer la cosa chequear, poner los flags: --check --diff

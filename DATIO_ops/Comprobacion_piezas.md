@@ -1,5 +1,9 @@
 # Comprobación de servicios.
 
+## Levantar piezas
+
+[https://docs.mesosphere.com/1.7/overview/architecture/#boot]
+
 ## Sherlock
 Desde un agente:
 ~~~ bash
