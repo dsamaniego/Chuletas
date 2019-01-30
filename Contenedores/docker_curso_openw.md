@@ -357,3 +357,38 @@ Dicho de otra manera. No es necesario modificar nuestras aplicaciones de toda la
 !(./Contenedores/monolitic_vs_microserv.png)
 
 En la parte de la izquierda tenemos una aplicación monolítica corriendo en un host con cuatro procesos principales: __systemd_, _nginx_ ,un proceso _python_ y un proceso _node.js_. El proceso de dockerizar sería construir una imagen de docker con la misma arquitectura de procesos, pero esto nos permite hacer push y pull de esta imagen de una manera muy sencilla, y corren en cualquier entorno de ejecución con total garantía. Más tarde, y si así se decide, podemos separar cada proceso en su propio microservicio, que sería la parte de la derecha, donde cada proceso corre en un contenedor independiente. Lo que queremos destacar es que la fase de dockerizar, aunque luego no se adopte una arquitectura de microservicios, es de enorme valor en sí mismo. También que saltarse este paso y tratar de pasar de la arquitectura de la derecha a la de la izquierda en un solo paso suele ser una garantía para buscar problemas.
+
+## Contrucción de imágenes
+
+### Docker Build y Dockerfile
+
+Como vimos en la introducción a Docker, una imagen se corresponde con la información necesaria para arrancar un contenedor, y básicamente se compone de un sistema de archivos y de otros metadatos como son el comando a ejecutar, las variables de entorno, los volúmenes del contenedor, los puertos que utiliza nuestro contenedor…
+
+La manera recomendada de construir una imagen es utilizar un fichero **Dockerfile**, un fichero con un conjunto de instrucciones que indican cómo construir una imagen de Docker. Las instrucciones principales que pueden utilizarse en un Dockerfile son:
+
+* **FROM image**: para definir la imagen base de nuestro contenedor.
+* **RUN comando**: para ejecutar un comando en el contexto de la imagen.
+* **ENTRYPOINT comando**: para definir el entrypoint que ejecuta el container al arrancar.
+* **CMD comando**: para definir el comando que ejecuta el container al arrancar.
+* **WORKDIR path**: para definir el directorio de trabajo en el contenedor.
+* **ENV var=value**: para definir variables de entorno.
+* **EXPOSE puerto**: para definir puertos donde el contenedor acepta conexiones.
+* **COPY origen destino**: para copiar ficheros dentro de la imagen. También se usa para multi-stage builds.
+
+Para una lista completa de las instrucciones disponibles ir a la documentación oficial .
+
+Un ejemplo de un dockerfile para una aplicación Flask en python podría ser:
+
+~~~ dockerfile
+FROM ubuntu:latest
+RUN apt-get update -y
+RUN apt-get install -y python-pip python-dev
+WORKDIR /app
+ENV DEBUG=True
+EXPOSE 80
+VOLUME /data
+COPY . /app
+RUN pip install -r requirements.txt
+ENTRYPOINT ["python"]
+CMD ["app.py"]
+~~~
