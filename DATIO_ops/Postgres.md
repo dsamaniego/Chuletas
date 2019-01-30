@@ -1,4 +1,30 @@
-# Operaciones en la base de datos.
+# BB.DD. PostgresSQL
+
+## Comandos básicos
+
+### Conexión a la BB.DD.
+
+Lo primero, tenemos que mirar en qué agente se está ejecutando la BB.DD., conectarnos a el y luego conectarnos al contenedor en el que esté la corriendo el postgres.
+
+Nos conectamos a la base de datos:  
+
+~~~ bash
+root@agent-f1-71:/# psql -Upostgres -h localhost -p 1025
+psql (9.6.8)
+SSL connection (protocol: TLSv1.2, cipher: ECDHE-RSA-AES256-GCM-SHA384, bits: 256, compression: off)
+Type "help" for help.
+~~~
+
+Una vez aquí podemos ejecutar comandos de postgresSQL y de SQL.
+
+* **\l**: Listar las bases de datos
+* **\c _<dd.bb.>_**: Conectarse a la base de datos
+* **set search_path to _database_**: Hacer consultas en una base de datoss concreta (una vez aquí, podemos usar los comandos estándar de SQL)
+* **\dt** Listar las tablas de la base de datos actual
+* **\d _tabla_**: descripción de laos camos de la tabla (_\dt+ tabla_ devuelve más informaciónd)
+* **\q**: salir del postgres
+
+## Operativas en la plataforma
 
 Todas las BB.DD. son PostgresSQL y tienen un scheduler y tres servidores 1 master (pg0001), 1 síncrono (pg0002) que tiene la BD sincronizada con el máster, y un asíncrono (pg0003).
 
@@ -8,16 +34,19 @@ Nos vamos al DC/OS correspondiente y buscamos el servicio concreto, y vemos en q
 !(./DCOS_bbdd.png)
 
 Abrimos un terminal, nos conectamos a la máquina y lugo al contendor de la base de datos:
-```
+
+~~~ bash
 [root@agent-29 WORK01 ~]# docker ps
 CONTAINER ID        IMAGE                                                                                         COMMAND                  CREATED             STATUS              PORTS               NAMES
 11189b80b083        nexus.daas.work.es.ether.igrupobbva/repository/es-docker/stratio/postgresql-community:1.1.2   "/docker-entrypoint.s"   7 days ago          Up 7 days                               mesos-3b70088e-c349-46aa-8def-41a845347e85-S15.dbd74146-cfd1-4db6-b7d6-b974f30c0073
 0404d21a44dd        quay.io/calico/node:v1.1.3                                                                    "start_runit"            8 days ago          Up 8 days                               calico-node
 [root@agent-29 WORK01 ~]# docker exec -ti 11189 /bin/bash
 root@agent-29:/# 
-```
+~~~
+
 Ahora ya nos podemos conectar al postgres.
-```
+
+~~~ bash
     root@agent-29:/# psql -Upostgres  -p 1025 
     psql (9.6.8)
     Type "help" for help
@@ -32,9 +61,11 @@ Ahora ya nos podemos conectar al postgres.
     template1 | postgres   | UTF8     | en_US.UTF-8 | en_US.UTF-8 | postgres=CTc/postgres+
           |            |          |             |             | =c/postgres
     (4 rows)
-```
+~~~
+
 Usar una base de datos:
-```
+
+~~~ bash
     postgres-# \c pgprocess
     You are now connected to database "pgprocess" as user "postgres"
     pgprocess-# \dn
