@@ -37,7 +37,7 @@ Docker está formado fundamentalmente por tres componentes:
 * Docker Client
 * Docker Registry
 
-![./Arq_docker.png]
+![Arquitectura de Docker](./Arq_docker.png)
 
 ### Docker Engine o Demonio Docker
 
@@ -354,7 +354,7 @@ Nos gustaría destacar que Docker se adapta perfectamente a una arquitectura bas
 
 Dicho de otra manera. No es necesario modificar nuestras aplicaciones de toda la vida para adaptarlas a Docker, Docker se adapta a nuestras aplicaciones tal y como son. Hay un conjunto de buenas prácticas para seguir una arquitectura basada en microservicios, pero solo son eso, buenas prácticas que dependiendo del contexto conviene o no aplicar, si no, serían axiomas de desarrollo. Mostramos esta idea en la siguiente figura:
 
-![./Contenedores/monolitic_vs_microserv.png]
+![Monilitico vs. Microservicio](./monolitic_vs_microserv.png)
 
 En la parte de la izquierda tenemos una aplicación monolítica corriendo en un host con cuatro procesos principales: _systemd_, _nginx_ ,un proceso _python_ y un proceso _node.js_. El proceso de dockerizar sería construir una imagen de docker con la misma arquitectura de procesos, pero esto nos permite hacer push y pull de esta imagen de una manera muy sencilla, y corren en cualquier entorno de ejecución con total garantía. Más tarde, y si así se decide, podemos separar cada proceso en su propio microservicio, que sería la parte de la derecha, donde cada proceso corre en un contenedor independiente. Lo que queremos destacar es que la fase de dockerizar, aunque luego no se adopte una arquitectura de microservicios, es de enorme valor en sí mismo. También que saltarse este paso y tratar de pasar de la arquitectura de la derecha a la de la izquierda en un solo paso suele ser una garantía para buscar problemas.
 
