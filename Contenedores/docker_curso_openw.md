@@ -37,7 +37,7 @@ Docker está formado fundamentalmente por tres componentes:
 * Docker Client
 * Docker Registry
 
-!(./Arq_docker.png)
+![./Arq_docker.png]
 
 ### Docker Engine o Demonio Docker
 
@@ -297,7 +297,7 @@ Inmutabilidad
 Una aplicación la componen tanto el código fuente como las librerías del sistema operativo y del lenguaje de programación necesarias para la ejecución de dicho código. Estas dependencias dependen a su vez del sistema operativo donde nuestro código va a ser ejecutado, y por esto mismo ocurre muchas veces aquello de que “no sé, en mi máquina funciona” . Sin embargo, el proceso de instalación de dependencias en Docker no depende del sistema operativo, si no que este proceso se realiza cuando se genera una imagen de docker. Es decir, una imagen de docker (también llamada repositorio por su parecido con los repositorios de git ) contiene tanto el código de la aplicación como las dependencias que necesita para su ejecución. Una imagen se genera una vez y puede ser ejecutada las veces que sean necesarias, y siempre ejecutará con las misma versión del código fuente y sus dependencias, por lo que se dice que es inmutable. Si unimos inmutabilidad con el hecho de que Docker es portable, decimos que Docker es una herramienta fiable, ya que una vez generada una imagen, ésta se comporta de la misma manera independientemente del sistema operativo y de la infraestructura donde se esté ejecutando.
 Ligereza
 
-Los contenedores corriendo en la misma máquina comparten entre ellos el sistema operativo, pero cada contenedor es un proceso independiente con su propio sistema de ficheros y su propio espacio de procesos y usuarios (para este fin Docker utiliza cgroups y namespaces , recursos de aislamiento basados en el kernel de Linux). Esto hace que la ejecución de contenedores sea mucho más ligera que otros mecanismos de virtualización. Comparemos por ejemplo con otra tecnología muy utilizada como es Virtualbox. Virtualbox permite del orden de 4 ó 5 máquinas virtuales en un ordenador convencional, #### Característicasmientras que en el mismo ordenador podremos correr cientos de containers sin mayor problema, además de que su gestión es mucho más sencilla. tos, veremos donde está en nuestro fichero físico (suele ser en ____/vr/lib/docker/volumes____).
+Los contenedores corriendo en la misma máquina comparten entre ellos el sistema operativo, pero cada contenedor es un proceso independiente con su propio sistema de ficheros y su propio espacio de procesos y usuarios (para este fin Docker utiliza cgroups y namespaces , recursos de aislamiento basados en el kernel de Linux). Esto hace que la ejecución de contenedores sea mucho más ligera que otros mecanismos de virtualización. Comparemos por ejemplo con otra tecnología muy utilizada como es Virtualbox. Virtualbox permite del orden de 4 ó 5 máquinas virtuales en un ordenador convencional,mientras que en el mismo ordenador podremos correr cientos de containers sin mayor problema, además de que su gestión es mucho más sencilla. tos, veremos donde está en nuestro fichero físico (suele ser en ____/vr/lib/docker/volumes____).
 
 Compartir un directorio de la máquina física en un contenedor. En el ejemplo nos es útil tener en local los logs del balanceador _nginx_, que permanecerán aunque paremos el contenedor.
 
@@ -354,9 +354,9 @@ Nos gustaría destacar que Docker se adapta perfectamente a una arquitectura bas
 
 Dicho de otra manera. No es necesario modificar nuestras aplicaciones de toda la vida para adaptarlas a Docker, Docker se adapta a nuestras aplicaciones tal y como son. Hay un conjunto de buenas prácticas para seguir una arquitectura basada en microservicios, pero solo son eso, buenas prácticas que dependiendo del contexto conviene o no aplicar, si no, serían axiomas de desarrollo. Mostramos esta idea en la siguiente figura:
 
-!(./Contenedores/monolitic_vs_microserv.png)
+![./Contenedores/monolitic_vs_microserv.png]
 
-En la parte de la izquierda tenemos una aplicación monolítica corriendo en un host con cuatro procesos principales: __systemd_, _nginx_ ,un proceso _python_ y un proceso _node.js_. El proceso de dockerizar sería construir una imagen de docker con la misma arquitectura de procesos, pero esto nos permite hacer push y pull de esta imagen de una manera muy sencilla, y corren en cualquier entorno de ejecución con total garantía. Más tarde, y si así se decide, podemos separar cada proceso en su propio microservicio, que sería la parte de la derecha, donde cada proceso corre en un contenedor independiente. Lo que queremos destacar es que la fase de dockerizar, aunque luego no se adopte una arquitectura de microservicios, es de enorme valor en sí mismo. También que saltarse este paso y tratar de pasar de la arquitectura de la derecha a la de la izquierda en un solo paso suele ser una garantía para buscar problemas.
+En la parte de la izquierda tenemos una aplicación monolítica corriendo en un host con cuatro procesos principales: _systemd_, _nginx_ ,un proceso _python_ y un proceso _node.js_. El proceso de dockerizar sería construir una imagen de docker con la misma arquitectura de procesos, pero esto nos permite hacer push y pull de esta imagen de una manera muy sencilla, y corren en cualquier entorno de ejecución con total garantía. Más tarde, y si así se decide, podemos separar cada proceso en su propio microservicio, que sería la parte de la derecha, donde cada proceso corre en un contenedor independiente. Lo que queremos destacar es que la fase de dockerizar, aunque luego no se adopte una arquitectura de microservicios, es de enorme valor en sí mismo. También que saltarse este paso y tratar de pasar de la arquitectura de la derecha a la de la izquierda en un solo paso suele ser una garantía para buscar problemas.
 
 ## Contrucción de imágenes
 
