@@ -1,4 +1,5 @@
 # LDAP
+
 Para conectarse al LDAP a través de la línea de comandos:
 
 Por ejemplo, para consultar un usuario:
@@ -29,4 +30,4 @@ Todavía no se sabe porqué pero hay veces que la clave de jenkins se pierde en 
 
 Para comprobar que es por eso, podemos hacer una consulta al ldap (como la anteior), si el problema es por la contraseña, nos dará un error de falta de credenciales.
 
-Para confirmarlo, nos conectamos al Apache Directory Studio, buscamos al usuario jenkins y verificamos la constraseña que hay en vault contra la que tiene almacenada en LDAP, si nos falla la verificación, es que se ha perdido la contrasea, avisamos a Pajo para que nos la restaure.
+Para confirmarlo, nos conectamos al Apache Directory Studio, buscamos al usuario jenkins y verificamos la constraseña que hay en vault contra la que tiene almacenada en LDAP, si nos falla la verificación, es que se ha perdido la contraseña, avisamos a Pajo para que nos la restaure.
