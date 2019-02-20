@@ -21,8 +21,7 @@ Con los de Stratio hemos visto que parece que el funcionamiento de Minuteman se 
 A lo bestia desde el contenedor de ilúvatar:  
 `touch /environment/.inventory_cache && ansible -m shell -b -a 'systemctl restart dcos-minuteman' 'dcos_agent_private,dcos_agent_public,dcos_master'`
 
-Hay un playbook de ansible (by Oscar):
-[https://github.com/DatioBD/iluvatar/blob/devel/deployer/ansible/operations/reactive/restart_dcos_minuteman.yml]
+Hay un playbook de ansible (by Oscar): [https://github.com/DatioBD/iluvatar/blob/devel/deployer/ansible/operations/reactive/restart_dcos_minuteman.yml]
 
 He revisado el playbook y hace lo siguiente:
 1. chequea que esté definido el "host"
@@ -52,3 +51,17 @@ Hay una alerta reactiva que reinicia el minuteman cuando está caido o no respon
 < HTTP/1.1 200 OK
 < Vary: Accept
 ~~~
+
+## Kafka
+
+Es un gestor de colas de mensajes.
+
+### Links.
+
+* [Documentación oficial Apache](https://kafka.apache.org/)
+* [Documentación Stratio](https://stratio.atlassian.net/wiki/spaces/KAFKA2x2x/overview)
+* Documentación de Arquitectura:
+    * 
+    * [Troubleshooting](https://datiobd.atlassian.net/wiki/spaces/TA/pages/830636114/Troubleshooting+-+Kafka)
+    * [Capacity plan (doc. arquitectura)](https://docs.google.com/document/d/17ges-qPdEvR53Cra_V1nWKBg7eGaDOjc8jilRB3U0LA/edit?ts=5c6ac7ba#heading=h.8je8sdf7qlsm)
+* 

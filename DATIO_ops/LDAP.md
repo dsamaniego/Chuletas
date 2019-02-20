@@ -22,9 +22,22 @@ Key             	Value
 refresh_interval	768h0m0s
 config          	tenant=PLAY01;gidDefault=2222222222;iniIdServ=10000;finIdServ=10499;iniIdUser=30000;finIdUser=30999;baseLdap=dc=bbva,dc=com;realm=GL.PLAY01.BBVA.COM;groupDefault=DaasUsers;country=GL;host=ldap.secaas.play.es.ether.igrupobbva;port=389;groupDcosService=manager_admin;groupDcosNominal=DATA_ADM_DCOS;endPointKeytab=v2/keytab;endPointLdap=v2/ldap;endPointCertificate=v2/certificates;NOMBRE_AZ=SVES1P1HdDaaSH3;USUARIO_AZ=uhddaash3;Smartconnect_api=hddaasapi.sces1p100.isi;ISIROOTPATH=/ifs/HD/DaaS/H3;ZoneID=31;vault_path_hdfsls=platform/gl/dev/datio/hdfsls/hdfsls
 ~~~
-
 Lo que nos interesa el el **host** y el **port**
 
+El usuariio y contraseña la sacamos de:
+~~~ bash
+vault read /platform/<pais>/<env>/datio/automationsupport/automationsupport/ldap/basic/ldap
+Key             	Value
+---             	-----
+refresh_interval	768h0m0s
+password        	XXXXXXXX
+user            	cn=jenkins,cn=GlobalWrite,cn=Administrators,cn=Global,dc=bbva,dc=com
+~~~
+
+### En CCR
+
+En CCR para los chequeos estamos usando el usuario **iluvatar** este no guarda la contraseña en LDAP, la contraseña está en:
+vo
 ## NOTA IMPORTANTE
 Todavía no se sabe porqué pero hay veces que la clave de jenkins se pierde en el LDAP. La consecuencia es que fallan los jobs de jenkins.
 

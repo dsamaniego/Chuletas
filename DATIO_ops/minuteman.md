@@ -50,3 +50,21 @@ Sospecha a confirmar, cuando se están levantando los agentes relacionados con l
 ### Chequeo para el lunes
 
 Hacer el chequeo de minuteman y ver si los agentes en los que falla pertenecen a la AZ3 que es la que se va a actualizar este fin de semana.
+
+No ha fallado en ninguno, he probado por 4 veces en cada entorno de live el comando de ping.
+
+#### Mas cosas
+
+Discovery de FINA y minuteman.
+
+En LIVE-GL falla discovery en la conexión a la BD, está mirando arquitectura.
+
+han cambiado dos parámetros en el descritpro:
+ "MB_DB_HOST": "master.pgsandbox.l4lb.live01.daas.gl.igrupobbva",
+ "MB_DB_PORT": "5432",
+
+Por: 
+ "MB_DB_HOST": "pg-0001.pgsandbox.mss.live01.daas.gl.igrupobbva",
+ "MB_DB_PORT": "1025"
+
+ para recordarlo.
