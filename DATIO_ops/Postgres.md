@@ -193,3 +193,14 @@ para eso, abrimos el exhibitor: nos vamos al pg-0002, abrimos el descriptor y ca
 
 Luego nos aparecerá como pg-0001 y tendremos que parar todos menos el pg que tenga la ip del pg-0002 antigüo y luego ir añadiendo el syincrono y el asíncrono
 
+### Backups
+
+#### Todas las bases de datos
+
+`pg_dumpall -Upostgres  -hlocalhost -p1025> /tmp/pgprocess.dump`
+
+
+#### Una base de datos
+
+`pg_dump -Upostgres  -hlocalhost -p1025 -d pgprocess > /tmp/pgprocess.dump`
+
