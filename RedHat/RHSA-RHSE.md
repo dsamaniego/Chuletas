@@ -10,6 +10,7 @@
    4. [File Globbing](file_globbing)
    5. [Sustitución de comandos](#command_subs)
 3. [Obtener ayuda](#help)
+   1. [Comandos útiles](#hlp_cmd)
 
 # Introducción al curso<a name="introduccion"></a>
 
@@ -74,7 +75,7 @@ En una jerarquí a LVM se encapsulan los directorios, como mínimo:
 
 Para negar expresiones complejas de _file globbing_, meter un signo de exclamación entre los corchetes de apertura, por ejemplo: Ningun caracter alfabético: **[![:alpha:]]**
 
-## Sustitución de comandos<a name="command_subs"></a>
+## Sustitución de comandos<a name="hlp_command"></a>
 
 Tenemos dos formas de invocar un comando en línea de comandos:
 - `$(comando)`
@@ -100,7 +101,7 @@ El comando `man` está organizado en diferentes secciones de la 1 a la 8, las qu
 
 `mandb` Es un comando para actualizar la base de datos de ayuda, es útil correrlo cuando se instala algún nuevo paquete.
 
-## Coamndos útiles
+## Comandos útiles<a name="hlp_cmd"></a>
 
 - `man -k <palabla>` Muestra todas las entradas de **man** en las que aparece esa palabra en el sumario. Es equivalente al comando `apropos <palabra>`.
 - `man -K <palabra>` Como la anterior pero la búsqueda se extiende a todo el  artículo no solo al sumario.
