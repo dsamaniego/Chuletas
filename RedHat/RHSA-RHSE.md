@@ -11,8 +11,16 @@
    5. [Sustitución de comandos](#command_subs)
 3. [Obtener ayuda](#help)
    1. [Comandos útiles](#hlp_cmd)
+4. [Ficheros de texto](#txt_files)
+   1. [Redirecciones](#redir)
+      1. [Entrada desde un fichero](#file_input)
+      2. [Redirecciones de salida](#output_redir)
+   2. [Tuberías](#pipes)
+      1. [tee](#tee)
+5. [Usuarios y grupos](#user_group_mngmt)
 
 # Introducción al curso<a name="introduccion"></a>
+[kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
 
 #### Máquinas
 
@@ -108,4 +116,55 @@ El comando `man` está organizado en diferentes secciones de la 1 a la 8, las qu
 - `man -t <termino_de_ayuda>` Prepara la página de man para imprimir en formato PostScript.
 - `info` y `pinfo` Como **man** pero estructurado en nodos e hipervínculos, casi toda la ayuda del proyecto GNU está en este formato.
 - `/usr/share/doc` Documentación de paquetes, hay algunos que se tienen que instalar explicitamente con un `yum install -y <paquete>-doc-xxx`, para verlo lo más sencillo es usar un navegador (por ejemplo: `firefox file:///usr/share/doc/yum`).
+
+# Ficheros de texto<a name="txt_files"></a>
+
+Vamos a ver cómo trabajar con entradas y salidas, redirecciones, etc...
+
+Un proceso en ejecución tiene 4 flujos:
+* entrada estándar (stdin) (canal 0)
+* salida estándar (stdout) (canal 1)
+* salida de error (stdout) (canal 2)
+* salida a otros ficheros (canales, 3, 4, ...)
+
+## Redirecciones<a name="redir"></a>
+
+Operadores de redirección:
+* **>** Escribe en un fichero, si existe, lo sobreescribe y si no existe lo crea
+* **>>** Append, si existe, añade al fichero y si no lo crea.
+* **<** 
+
+Dispositivos especiales del sistema:
+* `/dev/null`--> es un sumidero, todo lo que dirijamos a él se pierde.
+* `/dev/zero`--> Si queremos meter ceros como entrada.
+
+### Redirecciones de salida<a name"output_redir"></a>
+
+Ojo, los operadores de fusión más modernos ( &>file &>>file) puede que no funcionen en shells antigüas.
+
+### Entrada desde un fichero<a name="file_input"></a>
+
+Podemos redirigir la salida como entrada a otro programa (por ejemplo en un bucle for):
+~~~ bash
+while read line
+do
+  echo "$line"
+done < "${1:-/dev/stdin}
+~~~
+
+## Tuberías<a name="pipes"></a>
+
+Otra forma de hacer que la salida de un fichero sea la entrada de otro comando es con un pipe **|**.
+
+Para encadenar comandos, ya sabemos que hay que separar comandos por un **;**, para encadenar salidas de un proceso como entrada del siguiente, se usan las tuberías (enlazas las stdout).
+
+### tee<a name="tee"></a>
+
+Comando **tee** copia su stdin a stdout y al fichero que le digamos.
+
+Ejemplos:
+* `ls -l | tee /tmp/saved-output | less` --> la salida de tee va a pantalla y a un fichero
+* `ls -l |tee /dev/pts/0| mail student@desktop1.example.com` --> El tee envía su salida al terminal y, a la vez al programa de correo electrónico (para ver el teminal, podemos usar el comando `tty` para ver el dispositivo de salida).
+
+# Usuarios y grupos<a name"user_group_mngmt"></a>
 
