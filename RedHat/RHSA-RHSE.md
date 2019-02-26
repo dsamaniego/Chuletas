@@ -166,5 +166,5 @@ Ejemplos:
 * `ls -l | tee /tmp/saved-output | less` --> la salida de tee va a pantalla y a un fichero
 * `ls -l |tee /dev/pts/0| mail student@desktop1.example.com` --> El tee envía su salida al terminal y, a la vez al programa de correo electrónico (para ver el teminal, podemos usar el comando `tty` para ver el dispositivo de salida).
 
-# Usuarios y grupos<a name"user_group_mngmt"></a>
+# Usuarios y grupos<a name="user_group_mngmt"></a>
 
