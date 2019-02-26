@@ -164,7 +164,71 @@ Comando **tee** copia su stdin a stdout y al fichero que le digamos.
 
 Ejemplos:
 * `ls -l | tee /tmp/saved-output | less` --> la salida de tee va a pantalla y a un fichero
-* `ls -l |tee /dev/pts/0| mail student@desktop1.example.com` --> El tee envía su salida al terminal y, a la vez al programa de correo electrónico (para ver el teminal, podemos usar el comando `tty` para ver el dispositivo de salida).
+* `ls -l | tee /dev/pts/0| mail student@desktop1.example.com` --> El tee envía su salida al terminal y, a la vez al programa de correo electrónico (para ver el teminal, podemos usar el comando `tty` para ver el dispositivo de salida).
 
 # Usuarios y grupos<a name="user_group_mngmt"></a>
 
+Cada proceso y fichero tiene un usuario propietario.
+
+Para ver la cuenta de usuario: comando **id**
+
+Los usuarios se identifican en el sistema por su UID.
+
+La configuración del usuario está en el fichero `/etc/passwd`, que contiene solo los usuarios locales. tiene 7 campos:
+1. username
+2. password (en desuso en ese fichero, la passwd está encriptada  en el fichero `/etc/shadow`)
+3. UID
+4. GID, grupos del usuario, 1 principal y el resto secundarios.
+   Cuando creamos el usuario se crea un grupo principal con el mismo nombre que el usuario
+5. GECOS: String que usamos para identificar el usuario.
+7. $HOME: directorio raíz del usuario
+8. shell del usuario (podemos tener o `/sbin/nologin` -para evitar que el usuario no haga login ,por ejemplo, si va a usar servicios del sistema pero no necesita acceso a la shell de sistema ni manipular ficheros del sistema; o `/bin/false`, si no queremso que use nada de nuestro sistema).
+
+Configuración de grupos, `/etc/group`:
+1. nombre
+2. Contraseña del grupo (normalmente no se pone).
+3. GID
+4. miembros del grupo
+
+Relación de usuarios y grupos.
+
+Un usuario puede tener **exactamente** un grupo principal, que es el GID que viene en el `/etc/passwd` y se corresponderá con una entrada del `/etc/group`. De hecho a este grupo se le llama _grupo privado_.
+
+Cuando creamos un fichero se le asigma un usuario y grupo acorde con los del usuario que los ha creado.
+
+Si se quieren añadir nuevas capacidades a un usuario, mejor añadir grupos suplementarios -mejor no cambiar el grupo principal.
+
+## Conseguir acceso de superusuario<a name="root_access"></a>
+
+El señor **root**, tiene todos los poderes sobre el sistema, sólo el puede administrar los dispositivos físicos del sistema.
+
+Dado que tiene todos los privilegios, tiene una capacidad ilimitada de romper el sistema, es una cuenta que hay que tener **MUY** protegida.
+
+**RECOMENDACIÓN:** Acceder como usuario normal y escalar privilegios. Ojo, los privilegios en consola no son lo mismo que los de GNOME.
+
+¿Cómo escalamos privilegios?
+* `su [-] <username>`:
+   * el **-** indica que tomamos las variables de entorno del usuario al que escalamos.
+   * si no ponemos usuario, escalamos a root.
+   * Nos pedirá el passwd del usuario destino.
+   * Problema... hay que conocer el passwd de root.
+ * `sudo <username>`
+   * Nos permite ejecutar lo que tengamos permitido en la configuración de sudo como usuario al que hemos escalado privilegios.
+   * Nos pide el passwd del usuario que quiere escalar privilegios, con lo que no distribuimos la contraseña de root.
+   * Con la opción **-i** nos permite escalar privilegios al usuario con mayores privilegios.
+   * En RHEL7: Si tenemos un usuario que pertenece al grupo **wheel** también tendrá privilegios en el fichero `sudoers`  
+      Si hacemos un `visudo`, vemos la entrada por el grupo:
+      ~~~bash
+      %wheel  ALL=(ALL) ALL
+      ~~~  
+      Que indica que usuarios del grupo wheel puede hacer sudo desde todas las terminales a todos los usuarios del sistema y ejecutar cualquier comando.
+   * Deja logs en `/var/log/secure` de todas las acciones hechas por los usuarios.
+   * Los ficheros de configuración están en `/etc/sudoers.d/*`
+   * El fichero principal es el `/etc/sudoers` (para editarlo hay que usar **visudo** que hace chequeos de formato y si la cagamos no nos deja guardar.
+   
+Esto, no impide que cuando vayamos a trabajar con entornos gráficos, lo que nos restringe los permisos es el _Policy Kit_ de GNOME.
+
+
+# Trucos 
+En vi, si ejecutamos sudo vi, podremos ejecutar comandos como root ejecutando lo siguiente:
+`:r! <comando>`
