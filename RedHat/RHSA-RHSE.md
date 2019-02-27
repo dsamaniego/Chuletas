@@ -295,9 +295,9 @@ name:password:lastchange:minage:maxage:warning:inactive:expire:blank, donde:
 #### Contraseña cifrada.
 
 El has de la contraseña almacena 3 datos separados por '$':$N$semilla$cif_passwd
-$N$ -- Algoritmo de cifrado 1-6 (6 por defecto)
-$semilla$ -- Semilla aleatoria para el cifrado
-$cif_passwd$ -- Contraseña cifrada
+**$N$** -- Algoritmo de cifrado 1-6 (6 por defecto)  
+**$semilla$** -- Semilla aleatoria para el cifrado  
+**$cif_passwd$** -- Contraseña cifrada
 
 Cuando te logas e introduces el passwd, coge esa contraseña introducida y aplica el método de hash usado con la semilla y la compara con la almacenada, si coincide p'alante, y si no, caput.
 
