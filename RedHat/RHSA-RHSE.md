@@ -294,7 +294,7 @@ name:password:lastchange:minage:maxage:warning:inactive:expire:blank, donde:
 
 #### Contraseña cifrada.
 
-El has de la contraseña almacena 3 datos separados por '$':$N$semilla$cif_passwd
+El has de la contraseña almacena 3 datos separados por _'$':$N$semilla$passwdCifrada_  
 **$N$** -- Algoritmo de cifrado 1-6 (6 por defecto)  
 **$semilla$** -- Semilla aleatoria para el cifrado  
 **$cif_passwd$** -- Contraseña cifrada
