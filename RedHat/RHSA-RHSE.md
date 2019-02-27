@@ -270,12 +270,12 @@ Todos estos rangos se pueden manipular en el `/etc/login.defs`
 ### Administración de grupos locales <a name="group_admin"></a>
 
 Añadir un grupo: `groupadd [-g <GID>] <nombre_gr>`, si no le ponemos GID, nos da el siguiente GID de los grupos que no son del sistema.
-Renombrar un grupo: `groupmod -n <nombre_nuevo> <nombre_antigüo>`
-Cambiar el GID: `groupmod -g <nuevo_GID> <nombre_gr>`
+Renombrar un grupo: `groupmod -n <nombre_nuevo> <nombre_antigüo>`  
+Cambiar el GID: `groupmod -g <nuevo_GID> <nombre_gr>`, a partir de ahí todos los grupos que creemos se irán numerando a partir de este (aunque no especifiquemos), pero los grupos de usuarios seguirán creándose con lso 1000..., esto se hace para que no colisionen los grupos de trabajo con los grupos de usuarios.  
 Borrar grupo: `groupdel <grupo>`, lo que vale para el borrado de usuarios, vale para los grupos. Más ojo todavía porque puede haber varios usuarios 
+Si queremos cambiar el grupo principal a un usuario: `usermod -g <grupo> <username>`  
+Si queremos añadir grupos secundarios: `usermod -aG <lista_secundarios> <username>`, si no ponemos el -a, sustituiremos los grupos secundarios que tenga por los nuevos.  
 
-Si queremos cambiar el grupo principal a un usuario: `usermod -g <grupo> <username>`
-Si queremos añadir grupos secundarios: `usermod -aG <lista_secundarios> <username>`, si no ponemos el -a, sustituiremos los grupos secundarios que tenga por los nuevos.
 
 
 
