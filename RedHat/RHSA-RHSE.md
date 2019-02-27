@@ -22,6 +22,7 @@
       1. [Rangos de UIDs](#UID_range)
    2. [Administración de grupos locales](#group_admin)
    3. [Contraseñas](#passwd)
+6. [Permisos](#perms)
 
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
@@ -327,6 +328,32 @@ Podemos impedir que un usuario no acceda a la shell cambiando su shell a `/sbin/
 ~~~ bash
 usermod -s /sbin/nologin <username>
 ~~~
+
+# Permisos <a name="perms"></a>
+
+Si hacemos un ls -l, vemos las sigueintes características:
+~~~bash
+kiosk@foundation12 ~]$ ls -l /etc/yum.conf
+-rw-r--r--. 1 root root 813 Nov 26  2017 /etc/yum.conf
+~~~
+
+Vienen en 3 grupos USER - GROUP - OTHER y se aplican de izda a dcha, e.d. se aplican los permisos del primer grupo que cumpla.
+
+En ficheros:  
+r --> leer archivos  
+w --> modificar archivos  
+x --> ejecutar archivos
+
+En directorios:  
+r --> listar el contendio del directorio  
+w --> borrar o añadir ficheros  
+x --> puedo atravesar el directorio
+
+OJO al crear estructuras de directorios, a ver si podemos atravesarlos. y no se heredan los permisos como en el caso de Windows.
+
+Si quiero ver los permisos de un directorio: `ls -ld <directorio>`
+
+
 
 
 
