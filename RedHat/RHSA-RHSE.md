@@ -23,7 +23,10 @@
    2. [Administración de grupos locales](#group_admin)
    3. [Contraseñas](#passwd)
 6. [Permisos](#perms)
-
+   1. [Cambiar permisos](#chmod)
+   2. [Cambiar propietarios](#chown)
+   3. [Permisos especiales](#setuid)
+   
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
 
@@ -298,7 +301,7 @@ name:password:lastchange:minage:maxage:warning:inactive:expire:blank, donde:
 El has de la contraseña almacena 3 datos separados por _'$':$N$semilla$passwdCifrada_  
 **$N$** -- Algoritmo de cifrado 1-6 (6 por defecto)  
 **$semilla$** -- Semilla aleatoria para el cifrado  
-**$cif_passwd$** -- Contraseña cifrada
+**$cif_passwd$** -- Contraseña + uid cifrado
 
 Cuando te logas e introduces el passwd, coge esa contraseña introducida y aplica el método de hash usado con la semilla y la compara con la almacenada, si coincide p'alante, y si no, caput.
 
@@ -353,8 +356,55 @@ OJO al crear estructuras de directorios, a ver si podemos atravesarlos. y no se 
 
 Si quiero ver los permisos de un directorio: `ls -ld <directorio>`
 
+## Cambiar permisos <a name="chmod"></a>
 
+Se trabaja por grupos: - rwx rwx rwx   student  student  <fichero>, el propietario puede cambiar los permisos de todo.
 
+**Notación simbólica:** `chmod who what which <file/dir>`
+   * _who_: u, g, o, a (usuario, grupo, othos, todos).
+   * _what_: =, +, - (poner explícitamente permisos, añadir, quitar)
+   * _which_: r, w, x, X (lectura, escritura, ejecución, X se aplica x de forma recursiva a todos aquellos directorios que hay por el camino y a todos los ficheros en que alguien tiene permisos de ejecución).
+      * la X se suele aplicar en directorios, se tiene que aplicar siempre con la opción **-R** de **chmod**.
+**Notación octal:** `chmod sUGO <fichero>`
 
+## Cambiar propietarios <a name="chown"></a>
 
+Permite cambiar el propietario y el grupo, `chwon owner:group <file/dir>`, admite recursivo (**-R**).
 
+Podemos cambiar el propietario (`chmod <user> <file/dir>`), el grupo (`chmod :<group> <file/dir>`) o los dos. El propietario sólo lo puede cambiar root, el grupo lo puede cambiar el usuario. Otra forma de cambiar el grupo es con `chgrp <group> <file/dir>`.
+
+## Permisos especiales <a name="setuid"></a>
+
+Se puede meter otro octeto de permisos, en la x, si la hay, s, si no la hay una S y en others... t si la hay y T si no la hay. Es decir, se enmascara la x (permiso de ejecución).
+* Usuario y grupo: rwx --> rws, rw- --> rwS: Algo hay activo, si salen los standar, está inactivo.
+* Otros: rwx --> rwt, rw- --> rwT: Algo hay activo, si salen los standar, está inactivo.
+
+¿Qué es lo que se activa?
+* Usuario: **setuid**
+   * Carece de sentido en los directorios.
+   * El proceso se ejecuta como el usuario propietario no como el que lo lanza.
+   * ejemplo: passwd --> se ejecuta como usuario root.
+* Grupo: **setgid**
+   * Fichero: El archivo se ejecuta como el grupo propietario
+   * Directorio: Directorios colaborativos, todos los fichros y directorios que se creen dentro tienen como propietario el grupo propietario, no el del usuario que lo creó.
+   * Los permisos que se les suele dar a los directorios colaborativos son 2770
+* sticky-bit:
+   * No tiene sentido en ficheros.
+   * No permite al usuario eliminar ficheros de los que no son propietarios.
+   * Ejempo: /tmp cualquier usuario puede escribir en él, pero no puede borrar nada de lo que no sea propietario
+   
+Para asignar esto permisos se hace con chmod:
+   * usuario: u+s
+   * grupo: g+s
+   * other: o+t
+ localectl status
+ En la notación octal, se añade otro dígito a la notación octal antes de los otros 3 dígitos.
+ 
+## Máscaras <a name="umask"></a>
+
+Cuando creamos un fichero, por defecto se nos crea con un grupo de permisos por defecto, que vienen definidos por una máscara.
+Es una máscara en negativo, ed. 0027 --> Si pongo un 0, si se le da un 7, con la excepción de que no se le da ejecución si son ficheros.
+* Genérico del sistema: /etc/profile ó /etc/bashrc  
+* Para un usuario concreto: ~/.bash_profile ó ~/.bashrc  
+
+Por seguridad no se dan permisos de ejecución por defecto a ningún fichero, hay que darle explícitamente el fichero de ejecución.
