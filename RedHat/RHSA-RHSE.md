@@ -408,6 +408,3 @@ Es una máscara en negativo, ed. 0027 --> Si pongo un 0, si se le da un 7, con l
 * Para un usuario concreto: ~/.bash_profile ó ~/.bashrc  
 
 Por seguridad no se dan permisos de ejecución por defecto a ningún fichero, hay que darle explícitamente el fichero de ejecución.
-
-**TRUCO:** para obtener los permisos que aplican tras aplicar umask: 
-* `777 - umask = permisos_directorio - 111 = permisos_fichero`
