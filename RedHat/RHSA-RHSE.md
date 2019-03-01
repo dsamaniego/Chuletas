@@ -458,6 +458,6 @@ sleep 100000
  4648  4648  4565 pts/2    00:00:00 ps
 ~~~
 Si nos salimos de la shell, mataremos todos los jobs que estén en la shell, para prevenir esto está el comando `nohup <comando> &`
-----------------------------------------------------
+_______________________________
 **TRUCO:** A veces en vez de hacer un bucle `while true; do clear; <comando>; sleep 2; done` será mejor ejecutar `watch -n 2 <comando>`
-----------------------------------------------------
+_______________________________
