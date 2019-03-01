@@ -408,3 +408,56 @@ Es una máscara en negativo, ed. 0027 --> Si pongo un 0, si se le da un 7, con l
 * Para un usuario concreto: ~/.bash_profile ó ~/.bashrc  
 
 Por seguridad no se dan permisos de ejecución por defecto a ningún fichero, hay que darle explícitamente el fichero de ejecución.
+
+# Monitorización y administración de procesos <a name="proc"></a>
+
+Un proceso es una instancia corriendo o lanzada de un programa ejecutable, consiste en:
+* Espacio de direccines en memoria
+* Propiedades de seguridad
+* Una o mas hilos de ejecución
+* Estado del proceso.
+
+El entorno de un proceso incluye:
+* Variables locales y globales.
+* Constexto actual almacenado.
+* Recursos reservados.
+
+## Comandos <a name="proc_cmd"></a>
+
+**ps**: 3 formatos de variables y un montón de flags.
+   * - UNIX POXIX `ps -aux`
+   * -- Extendidas de GNU `ps --aux`
+   * (sin guion) BSD `ps aux`
+   
+Cada uno hace una cosa distinta.
+
+**job** Está asociado a un pipeline entrado por la shell. No confundir con un proceso... Un job siempre se lanza desde una shell.
+* Podemos tener lo que está en primer plano
+* Lo que está en segundo plano.
+
+Si un proceso no tiene asociado un terminal, (se muestra en el campo TTY del ps el signo **?**)
+* Lanzar un proceso en segundo plano: `comando &` - al mandarlo, nos dará: __[job_id] PID__
+* pasar un proceso a segundo plano: `comando + Ctrl-z`
+* pasar a primer plano: `fg %<job_id>`, para conocer el número de job: `jobs`
+
+~~~bash
+[kiosk@foundation12 ~]$ sleep 100000 &
+[1] 4619
+[kiosk@foundation12 ~]$ jobs
+[1]+  Running                 sleep 100000 &
+[kiosk@foundation12 ~]$ fg %1
+sleep 100000
+^Z
+[1]+  Stopped                 sleep 100000
+[kiosk@foundation12 ~]$ jobs
+[1]+  Stopped                 sleep 100000
+[kiosk@foundation12 ~]$ ps -j
+  PID  PGID   SID TTY          TIME CMD
+ 4565  4565  4565 pts/2    00:00:00 bash
+ 4619  4619  4565 pts/2    00:00:00 sleep
+ 4648  4648  4565 pts/2    00:00:00 ps
+~~~
+Si nos salimos de la shell, mataremos todos los jobs que estén en la shell, para prevenir esto está el comando `nohup <comando> &`
+----------------------------------------------------
+**TRUCO:** A veces en vez de hacer un bucle `while true; do clear; <comando>; sleep 2; done` será mejor ejecutar `watch -n 2 <comando>`
+----------------------------------------------------
