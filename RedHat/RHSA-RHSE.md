@@ -459,4 +459,10 @@ sleep 100000
 ~~~
 Si nos salimos de la shell, mataremos todos los jobs que estén en la shell, para prevenir esto está el comando `nohup <comando> &`
 
-|**TRUCO:** A veces en vez de hacer un bucle `while true; do clear; <comando>; sleep 2; done` será mejor ejecutar `watch -n 2 <comando>`|
+**TRUCO:** A veces en vez de hacer un bucle `while true; do clear; <comando>; sleep 2; done` será mejor ejecutar `watch -n 2 <comando>`
+
+| Tables   |      Are      |  Cool |
+|----------|:-------------:|------:|
+| col 1 is |  left-aligned | $1600 |
+| col 2 is |    centered   |   $12 |
+| col 3 is | right-aligned |    $1 |
