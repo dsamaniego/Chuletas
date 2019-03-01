@@ -26,6 +26,10 @@
    1. [Cambiar permisos](#chmod)
    2. [Cambiar propietarios](#chown)
    3. [Permisos especiales](#setuid)
+7. [Monitorización y administración de procesos](#proc)
+   1. [Comandos](#proc_cmd)
+   2. [Señales](#signals)
+   3. [Monitorización de procesos](#proc_monitoring)
    
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
@@ -141,6 +145,7 @@ Operadores de redirección:
 * **>** Escribe en un fichero, si existe, lo sobreescribe y si no existe lo crea
 * **>>** Append, si existe, añade al fichero y si no lo crea.
 * **<** 
+
 
 Dispositivos especiales del sistema:
 * `/dev/null`--> es un sumidero, todo lo que dirijamos a él se pierde.
@@ -459,4 +464,122 @@ sleep 100000
 ~~~
 Si nos salimos de la shell, mataremos todos los jobs que estén en la shell, para prevenir esto está el comando `nohup <comando> &`
 
-| **TRUCO:** A veces en vez de hacer un bucle `while true; do clear; <comando>; sleep 2; done` será mejor ejecutar `watch -n 2 <comando>` |
+**TRUCO:** A veces en vez de hacer un bucle `while true; do clear; <comando>; sleep 2; done` será mejor ejecutar `watch -n 2 <comando>`
+
+## Señales <a name="signals"></a>
+
+Son interrupciones de SW enviadas al proceso.
+Principales señales (OJO, los números de las señales, varian según la plataforma, por lo que se suele usar el nombre de la señal).
+* **1 - SIGHUP** - _hangup_ Informa de la finalización de un proceso de un terminal.
+* **2 - SIGINT** - Interrupción del teclado. (CTRL-c)
+* **3 - SIGQUIT** - Como SIGINT pero genera un dump para depurar el proceso. (CTRL-\)
+* **9 - SIGKILL** - No se puede bloquear, provoca una finalización abrupta del programa.
+* **15 - SIGTERM** - Termina de forma ordenada, es la señal predeterminada.
+* **18 - SIGCONT** - Resume un proceso que está detenido (statuso Stop), y lo vuelve a lanzar.
+* **19 - SIGSTOP** - Suspende el proceso, no puede ser bloqueada o manejada
+* **20 - SIGTSTP** - Suspende el proceso, pero se puede bloquear (CTRL-z)
+
+Para la lista completa `kill -l`
+
+Para enviar una señal a un proceso: `kill -<signal> <PID>`
+Para enviar a varios:
+* `killall -<signal> <patrón_comando>` - usando expresiones regulares
+* `killall -<signal> <user> <patron_comando>` - Manda la señal a todos los comandos que cumplan el patrón del usuario especificado
+* `pkill` Permite usar creterio mas avanzados de selección_
+   * _-U <UID>_ - para usuario
+   * _-G <GUID>_ - para grupo
+   * _-P <PPID>_ - mata a los hijos del proceso padre
+   * _-t <terminal>_ - mata los procesos del terminal
+   
+Si queremos ver los usuarios de un terminal:
+* `who`
+* `w` --> Nos da mas información. (ver la ayuda).
+* `pstree [PID|user]` - muestra el arbol de procesos del usuario o del proceso
+* `pgrep ` para mostar procesos con búsquedas más avanzadas.
+
+## Monitorización de procesos <a name="proc_monitoring"></a>
+
+Comando `top` 
+Comando `uptime` -- Número de procesos, tiempo levantado y carga
+Comando `w`--> Informa de procesos de usuario
+
+### Promedios de carga.
+
+Nos los da el top o el uptime., si dividimos la carga por el número de cpus, y es >1, el sistema está sobrecargado.
+
+Sistemas por debajo de 1 es raro que tengan esperas.
+
+Por encima de 1, hay que analizar qué es lo que está pasando... si estoy paginando (las escrituras son caras en cuanto a la carga), si la red nos lastra, etc... 
+
+### campos del TOP
+VIRT --> se corresponde con (VSZ del ps).
+RES --> MEmoria física (RSS en ps)
+TIME --> Tiempo de CPU
+S --> Estado del proceso
+
+Shift+p --> te lo ordena por consumo de procesador
+Shift+m --> te lo ordena por consumo de memoria
+
+# Control de servicios y demonios <a name="systemctl"></a>
+
+* **systemd** es el análogo al **init** de versiones anteriores.
+   * controla los arranques de servicios y demonios del sistema.
+   * su PID es 1 (tanto en systemd -RHEL7- y en init -RHEL6 y anteriores).
+* **Demonio** procesos que realizan tareas y se ejecutan en segundo plano.
+   * Suelen acabar con la letra _d_
+   * Cuando quieren tener comunicación con otras partes del sistema, levanta un socket de systemd, o puede systemd levantar el socket y concederlo al demonio al que le toque, hasta que no tiene socket asignado, el daemos está aislado.
+* Un **servicio** hace referencia a uno o varios procesos daemon corriendo en el sistema.
+
+Todo esto no quita que haya cosas que se puedan contralar con **service** pero es un _legacy_.
+
+Que nos proporcina systemd:
+* Capacidades de paralelización en el arranque.
+* Inicio bajo demanda de los servicios.
+* Puede agrupar daemos relacionados.
+
+## Comando _systemctl_ <a name="systemctl"></a>
+
+* Ayuda: `systemctl -t hel`
+* consulta de estado: `systemctl [-l] <daemon>`
+
+Systemctl administra Unidades, 3 tipos:
+* **.service** - hacen referencia a un servicio del sistema
+* **.sockets** - comunicación interprocesos (IPC - semáforos)
+   * desde el socket, podemos levantar el servicio bajo demanda y poner en escucha la unidad que le toque
+   * como ejemplo _cups_
+* **.path** - hacen referencia a la posibilidad de levantar/activar un servicio en función de si se ha dejado un fichero en una ruta.
+
+**NOTA:** Cuidado con para una unidad porque el path y el socket pueden activarlo.
+Para ver el estado: `systemctl status name.type`  
+Estados: 
+   * loaded.
+   * enabled, disabled, static (este no se puede inciar de forma manual).
+   * active (runing, exited, waiting, inactive)
+
+### Usos
+* Comprobar si un servicio está activo: `systemctl is-active name.type`
+* Comprobar si está preparado para ejecutarse en el inicio: `systemctl is-enabled name.type`
+* Listar estado de los servicios `systemctl list-units --type=service` Nos muestra las activas, con _-all_ muestra todas, incluidas las inactivas.
+* Ver las configuraciones: `systemctl list-unit-files --type=service`
+* Servicios que han fallado: `systemctl --failed --type=service`
+* Parar un servicio: `systemctl stop name.type`, pero ojo, si siguen activos el .socket y el .path, todavía estos pueden levantar el servicio, si no queremos que se levante, `systemctl disable name.type`
+* **Controlar los servicios**:
+   * status
+   * start
+   * stop
+   * restart
+   * reload (reinicio "gracefull")
+   
+ ### Dependencias de unidades
+ 
+`systemctl list-dependencies unit` Muestra las dependencias de la unidad, es decir, las unidades que la unidad en cuestión necesita para levantar.
+`systemctl list-dependencies unit --reverse` Lista las unidades que dependen de nuestra unidad.
+
+### Enmascaramiento.
+
+Para que ni el sistema ni un usuario levanten un servicio, se les enmascara, de forma que se borra el link simbólico que apunta al servicio, así nos aseguramos de que nadie accidentalmente nadie arranca el servicio.
+
+Esto lo podemos hacer para que no podamos levantar dos servicios que entran en conflicto (como por ejemplo, network vs. NetworkManager, o iptables vs. firewalld).
+
+`systemctl [mask|umask] <unit>` Una vez hecho esto, no podrá arrancar bajo ningún concepto.
+
