@@ -622,7 +622,7 @@ Para poder acceder por ssh a un host remoto desde nuestro host, tenemos que inte
 # generamos el par de claves
 $ ssh-keygen -t <alg_cifrado> -b <bytes_clave>
 # copiamos la clave pública al host remoto -nos pedirá la passwd del <user> en el <server>
-$ ssh-copy-id -i [ruta_clave_publica] <user>@<server>
+$ ssh-copy-id -i [ruta_clave_privada] <user>@<server>
 ~~~
 
 Importante, los permisos de los ficheros:
