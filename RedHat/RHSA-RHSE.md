@@ -1,5 +1,5 @@
 # Tabla de contenidos
-0. [Introducción al curso](#introduccion)
+[Introducción al curso](#introduccion)
 1. [Acceso a la línea de comandos](#consola)
    1. [Entorno gráfico](#graphic_console)
    2. [Terminales y consolas](#console)
@@ -30,9 +30,12 @@
    1. [Comandos](#proc_cmd)
    2. [Señales](#signals)
    3. [Monitorización de procesos](#proc_monitoring)
-8. [Configurando y asegurando el servicio SSH](#openssh)
+8. [Control de servicios y demonios](#systemctl)
+   1. [Comando _systemctl_](#systemctl)
+9. [Configurando y asegurando el servicio SSH](#openssh)
    1. [Conexión](#conex_ssh)
    2. [Configuración del servicio](#config_ssh)
+10. [Manejo de logs](#logs)
    
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
@@ -394,7 +397,7 @@ Se puede meter otro octeto de permisos, en la x, si la hay, s, si no la hay una 
    * ejemplo: passwd --> se ejecuta como usuario root.
 * Grupo: **setgid**
    * Fichero: El archivo se ejecuta como el grupo propietario
-   * Directorio: Directorios colaborativos, todos los fichros y directorios que se creen dentro tienen como propietario el grupo propietario, no el del usuario que lo creó.
+   * Directorio: _Directorios colaborativos_, todos los ficheros y directorios que se creen dentro tienen como propietario el grupo propietario, no el del usuario que lo creó.
    * Los permisos que se les suele dar a los directorios colaborativos son 2770
 * sticky-bit:
    * No tiene sentido en ficheros.
@@ -640,3 +643,59 @@ Parámetros:
 * **PasswordAutentication** (_yes/no_) Se permite el acceso con passwd o sólo con claves.
 
 Para que coja los cambios, `systemctl reload sshd`
+
+# Manejo de logs <a name="logs"></a>
+
+Tenemos dos tipos de logs:
+* Los que hay en /var/log
+* Los colectados por systemd-journald, que no persisten entre reinicios, genera un registro en binario que podemos consultar con **journalctl**.
+   * Mensajes del kernel.
+   * Arranques.
+   * Mensajes de demonios que se inician o ejecutan mal.
+* Los colectados por **rsyslog**, cualquier aplicación que instalemos, la podemos acoplar a este sistema de log
+
+## /var/log
+
+**/var/log/messages** - la mayoría de los mensajes menos los que tengan un fichero específico.  
+**/var/log/secure** - relacionado con autenticaciones y seguridad  
+**/var/lgo/maillog** - relacionado con los correos electrónicos  
+**/var/log/cron** - relacionado con las tareas programadas  
+**/var/log/boot.log** - relacionado con el arranque  
+
+## rsyslog
+
+Procesa los mensajes _facility.severity_
+* **facility** en `man 5 rsyslog.conf`
+* **severity** 8 niveles
+
+Fichero de configuración en `/etc/rsyslog.conf` o en cualquier fichero `/etc/rsyslog.d/`.
+
+En el fichero de configuración, los logs vienen configurados en la forma: _facility.severity    <ruta_fich_log>_:
+* Se pueden usar comodines para la severity y facility.
+* Podemos tener varios pares facility.severity en la misma línea.
+* Se pueden negar facilities con la severity _none_.
+
+## Rotado de logs (logrotate)
+
+Fichero de configuracion: `/etc/logrotate.conf` o en `/etc/logrotate.d/*`
+Cuando se hago un rotado, se guardará el antigüo con un timestamp.
+Después de cierto tiempo, se borran del histórico.
+
+Si no rota correctamente habría que revisar el cron.
+
+Mas información `man 8 logrotate`
+
+### Analizando una entrada de syslog.
+
+Las líneas viene en el formato:
+timestamp:host:programa:mensaje
+
+Podemos usar un `tail -f <fichero_log>`
+
+### Comando _logger_
+
+Para comprobar configuraciones que hemos hecho en el syslog: `logger -p facility.severity "string"` nos mandará al fichero de log que esté configurado el mensaje.
+
+## journalctl
+
+Hay una BB.DD. central de systemd que manda a journald.
