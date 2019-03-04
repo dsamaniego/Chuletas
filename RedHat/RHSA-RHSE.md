@@ -6,7 +6,7 @@
 2. [Manejo de archivos con la línea de comandos](#manage_files)
    1. [Jerarquía de directorios](#file_hierachy)
    2. [Conceptos](#file_concepts)
-   3. [Manejo de fichreros](#file_mngmt)
+   3. [Manejo de ficheros](#file_mngmt)
    4. [File Globbing](file_globbing)
    5. [Sustitución de comandos](#command_subs)
 3. [Obtener ayuda](#help)
@@ -611,7 +611,7 @@ Cuando se inicia la conexión, se hace un intercambio de claves públicas.
       * Si hemos tenido que reinstalar el servidor, se me han vuelto a generar la clave de máquina, y nos dará un warning de man-in-the-middle.
      * Habrá que borrar la línea en el known_hosts y volver a tirar el ssh.
      * Hay un fichero general para toda la máquina **/etc/ssh/ssh_known_hosts**
-     * En el servidor, la lista de claves está en /etc/ssh/*key* (.pub => públicas, las que no tienen nada, privadas). Si queremos 
+     * En el servidor, la lista de claves está en **/etc/ssh/\*key\*** (.pub => públicas, las que no tienen nada, privadas). Si queremos 
   * **authorized_keys**: Se guardan las claves públicas de los usuarios remotos que pueden hacer login con mi usuario en mi máquina sin meter passwd.
 
 ### Configuración de la conexión sin contraseña.
@@ -635,8 +635,8 @@ Importante, los permisos de los ficheros:
 Fichero de configuracion: **/etc/ssh/sshd_config**. No suele ser habitual a root por ssh, es más lógico conectarse con un usuario que tenga capacidad de sudo.
 
 Parámetros:
-* **PermitRootLogin** - permite o deniega el acceso por ssh con root.
+* **PermitRootLogin** (_yes/no_) permite o deniega el acceso por ssh con root.
    * **PermitRootLogin _without-password_**  No permite el método passwd de autenticación, sólo permitirá con claves asimétricas.
-* **PasswordAutentication** - Se permite el acceso con passwd o sólo con claves.
+* **PasswordAutentication** (_yes/no_) Se permite el acceso con passwd o sólo con claves.
 
 Para que coja los cambios, `systemctl reload sshd`
