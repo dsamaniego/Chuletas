@@ -30,6 +30,9 @@
    1. [Comandos](#proc_cmd)
    2. [Señales](#signals)
    3. [Monitorización de procesos](#proc_monitoring)
+8. [Configurando y asegurando el servicio SSH](#openssh)
+   1. [Conexión](#conex_ssh)
+   2. [Configuración del servicio](#config_ssh)
    
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
@@ -511,6 +514,8 @@ Sistemas por debajo de 1 es raro que tengan esperas.
 
 Por encima de 1, hay que analizar qué es lo que está pasando... si estoy paginando (las escrituras son caras en cuanto a la carga), si la red nos lastra, etc... 
 
+Para entender la carga: (https://www.tecmint.com/understand-linux-load-averages-and-monitor-performance/)
+
 ### campos del TOP
 VIRT --> se corresponde con (VSZ del ps).
 RES --> MEmoria física (RSS en ps)
@@ -583,3 +588,55 @@ Esto lo podemos hacer para que no podamos levantar dos servicios que entran en c
 
 `systemctl [mask|umask] <unit>` Una vez hecho esto, no podrá arrancar bajo ningún concepto.
 
+# Configurando y asegurando el servicio SSH <a name="openssh"></a>
+
+**OpenSSH - _Open Secure Shell_** - permite cifrar usando claves asimétricas entre dos máquinas.
+
+Qué necesitamos:
+* Una cuenta en el sistema remoto (IMPORTANTE: el usuario debe existir en el sistema remoto).
+* Una shell
+
+Podemos ver los usuarios que están conectados con `w -f`, que nos muestra los usuarios conectados, tanto en local, como remotos.
+
+Comandos simples:
+* `ssh <remotehost>` - Sesión con el mismo usuario que el que tenemos en local.
+* `ssh <remoteuser>@<remotehost>` - Abre una sesión con un usuario distinto del que tenemos en local.
+* `ssh <user>@<host> <comando>` - Ejecuta este comando en la máquina remota.
+
+## Conexion <a name="conex_ssh"></a>
+
+Cuando se inicia la conexión, se hace un intercambio de claves públicas.
+   * Se guardan en una serie de ficheros dentro del directorio oculto en **~/.ssh**
+   * **known_hosts**: Contiene la clave de host de cada una de las máquinas a las que nos hemos conectado desde nuestra máquina.
+      * Si hemos tenido que reinstalar el servidor, se me han vuelto a generar la clave de máquina, y nos dará un warning de man-in-the-middle.
+     * Habrá que borrar la línea en el known_hosts y volver a tirar el ssh.
+     * Hay un fichero general para toda la máquina **/etc/ssh/ssh_known_hosts**
+     * En el servidor, la lista de claves está en /etc/ssh/*key* (.pub => públicas, las que no tienen nada, privadas). Si queremos 
+  * **authorized_keys**: Se guardan las claves públicas de los usuarios remotos que pueden hacer login con mi usuario en mi máquina sin meter passwd.
+
+### Configuración de la conexión sin contraseña.
+
+Para poder acceder por ssh a un host remoto desde nuestro host, tenemos que intercambiar las claves.
+
+~~~ bash
+# generamos el par de claves
+$ ssh-keygen -t <alg_cifrado> -b <bytes_clave>
+# copiamos la clave pública al host remoto -nos pedirá la passwd del <user> en el <server>
+$ ssh-copy-id -i [ruta_clave_publica] <user>@<server>
+~~~
+
+Importante, los permisos de los ficheros:
+* claves públicas: 644
+* claves privadas: 600
+* autorized_keys: 600
+
+## Configuración del servicio <a name="config_ssh"></a>
+
+Fichero de configuracion: **/etc/ssh/sshd_config**. No suele ser habitual a root por ssh, es más lógico conectarse con un usuario que tenga capacidad de sudo.
+
+Parámetros:
+* **PermitRootLogin** - permite o deniega el acceso por ssh con root.
+   * **PermitRootLogin _without-password_**  No permite el método passwd de autenticación, sólo permitirá con claves asimétricas.
+* **PasswordAutentication** - Se permite el acceso con passwd o sólo con claves.
+
+Para que coja los cambios, `systemctl reload sshd`
