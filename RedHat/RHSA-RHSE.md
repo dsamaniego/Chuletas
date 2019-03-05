@@ -397,7 +397,7 @@ Se puede meter otro octeto de permisos, en la x, si la hay, s, si no la hay una 
    * ejemplo: passwd --> se ejecuta como usuario root.
 * Grupo: **setgid**
    * Fichero: El archivo se ejecuta como el grupo propietario
-   * Directorio: _Directorios colaborativos_, todos los ficheros y directorios que se creen dentro tienen como propietario el grupo propietario, no el del usuario que lo creó.
+   * Directorio: _Directorios colaborativos_, todos los ficheros y directorios que se creen dentro tienen como propietario el grupo propietario, no el del usuario que lo creó. Lo lógico en los directorios colaborativos es que sea root el propietario del directorio. Porque si es de otro usuario, ese usuario, al ser dueño del directorio, podría borrar cualquier fichero.
    * Los permisos que se les suele dar a los directorios colaborativos son 2770
 * sticky-bit:
    * No tiene sentido en ficheros.
@@ -674,6 +674,7 @@ En el fichero de configuración, los logs vienen configurados en la forma: _faci
 * Se pueden usar comodines para la severity y facility.
 * Podemos tener varios pares facility.severity en la misma línea.
 * Se pueden negar facilities con la severity _none_.
+* en el mail, fijarse que viene `mail.* -/var/log/mail.log` el guión idica que los logs se hacen de forma asíncrona.
 
 ## Rotado de logs (logrotate)
 
@@ -696,6 +697,77 @@ Podemos usar un `tail -f <fichero_log>`
 
 Para comprobar configuraciones que hemos hecho en el syslog: `logger -p facility.severity "string"` nos mandará al fichero de log que esté configurado el mensaje.
 
-## journalctl
+## journalctl <a name="journalctl"></a>
 
-Hay una BB.DD. central de systemd que manda a journald.
+Hay una BB.DD. central de systemd que manda a journald. Los logs se almacenan en el `/run/log/journal` que es un fichero binario indexado. No se conservan entre reinicios (todo esto es el comportamiento por defecto y se puede cambiar).
+
+Para revisar todas las entradas de log que el sistema guarda usamos el comando **journalctl** hay que lanzarlo con root. 
+* **journalctl -n \<num>** Muestra las <num\> últimas líneas, sin no se le da valor, el defecto es 10
+* **journalctl -p \<severity>** Muestra los mensajes de cierta severidad y superiroes.
+* **journalctl -f** Va refrescando
+* **journal --since "YYYY-MM-DD_hh:mm:ss" --until "yyyy-mm-dd_hh:mm:ss"**
+   * Admite modificadores: yesteday, today, ...
+* **journalctl -o verbose** 
+   * Modificadores del comando, me dan facilidad para acotar ciertas entradas.
+      - _COMM -- comando
+      - _PID -- busca por PID
+      - _EXE -- ruta del comando
+      - _GID -- buscar por GID
+      - _SYSTEMD_UNIT -- busca pro unidad de systemd
+   
+### Haciendo persistente el journal de systemd
+
+Tenemos que crear una ruta paralela para hacerlo psersistente `/var/log/journal`, que tiene un rotado mensual, y donde se guardarán los logs de journal.
+
+Fichero de configuración en `/etc/systemd/journald.conf`.
+
+Por defecto el journal, no puede tener mas del 10% del sistema de ficheros, y tiene que dejar al menos el 15% libre. Estos límites se tocan el el fichero. Para ver estos límites: `journalctl |head -n 2`
+
+Para ver si está corriendo: `sysemctl status systemd-journald`
+
+#### Procedimiento
+~~~ bash
+# creamos el directorio
+mkdir /var/log/journal
+chown root:systemd-journal /var/log/journal
+chmod 2755 /var/log/journal
+# Pasamos una señal al journal para que empiece a trabajar en la nueva ruta
+killall -USR1 systemd-journald
+# Podemos forzar el rotado:
+killall -USR2 systemd-journald
+~~~
+
+Ahora, como tenemos varios rebotes, podemos ver lo que hay desde el rebote _n_ con `journalctl -b -n` 
+
+## NTP. Configuración del tiempo <a name="ntp"></a>
+
+_Network Time Protocol_ Nos sirve para mantener nuestro servidor en la hora correcta.
+
+* **timedatectl** nos va a dar el status de tiempo del sistema.
+* **timedateclt list-timezones** da un listado de TZ.
+* **tzselect** nos ayuda a seleccionar la TimeZone
+* **timedatectl set-timezone <nombre\>** Cambia la hora a la de la TZ especificada
+* **timedatectl set-time hh:mm:ss** Cambia la hora (conviene antes de sincronizar con el NTP
+* **timedatectl set-ntp true** activa NTP
+
+### chronyd
+
+Se encarga de mantener el reloj de sistema dentro de unos parámetros. Va registrando la sincronía del reloj co respecto al servidor NTP,  con un `driftfile` que se configura en `/etc/chrony.conf`
+
+Salvo casos especiales, configurar los NTP Pool Project como servidores NTP.
+
+**Conceptos**
+** stratum 0 --> siempre sincronizado
+** stratum 1 --> sincronizado sobre el
+** stratum 2 --> sincronizado con stratum 1.
+
+Tenemos una serie de capas por estratos, servidores dentro del mismo estrato, se denominan _peer_ y el el estrato superior, _server_.
+
+Todo se configura con /etc/chrony.conf
+* se pude configurar mas de un server y un peer.
+* server IP iburst --> 4 ráfagas de sincronización para sincronizar lo más rápido posible.
+* para ver contra quién nos estamos sincronizando: `chronyc sources`
+* El puerto TPC/UDP es el puerto 123 (ojo si queremos sincronizar con un servidor NTP externo a nuestra red, abrir puerto firewall).
+* para sincronizar, hay que reiniciar `systemctl restart chronyd`
+
+
