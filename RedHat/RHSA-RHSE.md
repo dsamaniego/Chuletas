@@ -36,6 +36,11 @@
    1. [Conexión](#conex_ssh)
    2. [Configuración del servicio](#config_ssh)
 10. [Manejo de logs](#logs)
+   1. [Monitorizacion del sistema](#logging)
+   2. [Rotado de logs](#logrotate)
+   3. [NTP, configuración del tiempo](#ntp)
+11. [Networking](#network)
+   1. [Conceptos](#net_concept)
    
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
@@ -646,6 +651,8 @@ Para que coja los cambios, `systemctl reload sshd`
 
 # Manejo de logs <a name="logs"></a>
 
+## Monitorizacion del sistema <a name="logging"></a>
+
 Tenemos dos tipos de logs:
 * Los que hay en /var/log
 * Los colectados por systemd-journald, que no persisten entre reinicios, genera un registro en binario que podemos consultar con **journalctl**.
@@ -654,7 +661,7 @@ Tenemos dos tipos de logs:
    * Mensajes de demonios que se inician o ejecutan mal.
 * Los colectados por **rsyslog**, cualquier aplicación que instalemos, la podemos acoplar a este sistema de log
 
-## /var/log
+### /var/log
 
 **/var/log/messages** - la mayoría de los mensajes menos los que tengan un fichero específico.  
 **/var/log/secure** - relacionado con autenticaciones y seguridad  
@@ -662,7 +669,7 @@ Tenemos dos tipos de logs:
 **/var/log/cron** - relacionado con las tareas programadas  
 **/var/log/boot.log** - relacionado con el arranque  
 
-## rsyslog
+### rsyslog
 
 Procesa los mensajes _facility.severity_
 * **facility** en `man 5 rsyslog.conf`
@@ -676,7 +683,7 @@ En el fichero de configuración, los logs vienen configurados en la forma: _faci
 * Se pueden negar facilities con la severity _none_.
 * en el mail, fijarse que viene `mail.* -/var/log/mail.log` el guión idica que los logs se hacen de forma asíncrona.
 
-## Rotado de logs (logrotate)
+## Rotado de logs <a name="logrotate"></a>
 
 Fichero de configuracion: `/etc/logrotate.conf` o en `/etc/logrotate.d/*`
 Cuando se hago un rotado, se guardará el antigüo con un timestamp.
@@ -763,11 +770,91 @@ Salvo casos especiales, configurar los NTP Pool Project como servidores NTP.
 
 Tenemos una serie de capas por estratos, servidores dentro del mismo estrato, se denominan _peer_ y el el estrato superior, _server_.
 
-Todo se configura con /etc/chrony.conf
+Todo se configura con `/etc/chrony.conf`
 * se pude configurar mas de un server y un peer.
 * server IP iburst --> 4 ráfagas de sincronización para sincronizar lo más rápido posible.
 * para ver contra quién nos estamos sincronizando: `chronyc sources`
 * El puerto TPC/UDP es el puerto 123 (ojo si queremos sincronizar con un servidor NTP externo a nuestra red, abrir puerto firewall).
 * para sincronizar, hay que reiniciar `systemctl restart chronyd`
 
+# Networking <a name="network"></a>
 
+## Conceptos <a name="net_concept"></a>
+
+### IPv4 - modelo de 4 capas
+
+* **Capa 4** - Aplicacion (SSH, HTTP, HTTPS, NFS, CIFS, SMTP, ...), los datos que se mueven están relacionados con estos protocolos.
+* **Capa 3** - Transporte (TCP, UDP) -- fichero `/etc/services`, aquí es donde tenemos que mirar los puertos de servicios (menos si está SELinux activo).
+   * Aquí hablaresmo de puertos e IP (socket)
+* **Capa 2** - Red o internet, transporta los datos a través de la red a un host, capa de conexiones entre redes. (ICMP).
+* **Capa 1** - Física o enlace, relacionado con las MACs (802.3 - Ethernet, 802.11 - Wireless), que deben identificar de manera unívoca una interfaz de red.
+
+### Direcciones IP
+4 octetos (32 bits), incluyen la dir de red y de host.
+
+* Todos los hosts de la misma subred se comunican sin enrutador entre ellos.
+* En una misma subred no puede haber dos hosts con la misma dirección de host.
+* Para que una máquina salga a otras redes, necesitamos un gateway o enrrutador (que tiene que ser de su red), que tiene una tabla de rutas a otras redes.
+
+### Enrrutamiento
+
+Para ver la tabla de rutas `netstat -nr` ó `ip route`.
+El gateway nos sirve para enrutar a una red que no es la nuestra, para llegar a una ruta que no sea la de nuestro GW por defecto, tendrá que tener una ruta estática.
+
+En la tabla de rutas:
+0.0.0.0/0 --> GW por defecto
+otra subred --> GW de esta subred (esto es la ruta estática)
+
+Cada interfáz de red, tendrá su propia subred.
+Para traducir las IPs a nombres, se usa DNS.
+
+La configuracion la podemos tener automática (DHCP) o estática.  
+Buscar "IP alias" (es una forma de sobrecargar las interfaces de red, una interfáz no tiene porqué tener una sola IP estática).
+
+### Nomenclatura de interfaces de networking.
+
+Estándar: eth0, eth1, eth2, ... Problema: el demonio _udev_ carga lo que tiene asignado, pero si se borra un intefáz o se rebota, puede dar probleams.
+
+Nombrado de interfaces: iioN
+* ii puede ser
+   * Ethernet: en-...
+   * Wireless: wl-...
+   * WWAN: ww-
+ * o puede ser:
+   * o - incorporado
+   * s - hot-plug conexión
+   * p - ranura pci
+   * n es el número de adaptador.
+ 
+P.ej: enp0s3
+
+Si se han definido reglas para _udev_ personalizadas o si tenemos definido _biosdevname_ se cambia el nombre de asignación (pXpY).
+ 
+## Trabajar con las redes <a name="network_work"></a>
+ 
+`/sbin/ip` --> `ip addr [interfaz]` ~ `ip a [interfaz]`
+ 
+* Chequear la intefáz: `ip -s link show [interfaz]`
+* Chequear conexión: `ping -c1 <ip/DNS>` (así lo podemos usar en un script).
+* Ver las rutas: `traceroute` - `tracepath`, la potente es la primera, ya que nos permite trabajar con UDP (predeterinado), ICMP (-I) o TCP (-T). 
+   * Muestran lso enrutadores por los que va pasando.
+
+## Sockets
+
+Requiere puerto, ip y protocolo.
+
+`netstat` (en desuso): -usar mejor la opción con _n_
+* `netstat -tulpan`
+* `netstat -putona`
+
+`ss` - Muestra estadísticas de los sockets
+* Nos interesa sobre todo la conexión local.
+* Opciones:
+   * -n -- numérico en vez de nombres (con nombres puede eternizarse para conectar con DNS)
+   * -t -- TCP
+   * -u -- UDP
+   * -l -- mustra los sockets a la escucha
+   * -a -- muestra todos los sockets
+   * -p -- proceso que usa el socket
+ 
+ 
