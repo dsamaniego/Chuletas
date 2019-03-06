@@ -6,6 +6,7 @@ Para hacer consultas de vault en todos los entornos, simplemente nos conectamos 
 Aquí el procedimiento es distinto (buscar un correo con asunto: _Auth en vault con ldap_).
 
 ### Desde gosec1,2,3 con CLI:
+
 1. Exportamos la url de vault: `# export VAULT_ADDR=https://vault.service.eos.$(dnsdomainname):8200`
 2. Como nos estamos conectando por sebasstian y todo lo que escribimos queda registrado, lo mejor es tener un fichero en local **mypass_workes** o **mypass_play** con la contraseña de nuestro usuario XE dentro y copiarla al entorno que sea con sebasstian cada vez que necesitemos usar vault
     `./scripts/sebasshtian.sh ./mypass_workes gosec2@work.es:mypassword`
@@ -13,7 +14,17 @@ Aquí el procedimiento es distinto (buscar un correo con asunto: _Auth en vault 
 4. Operar normalmente (vault read, vault list, vault write...)
 5. Cuando dejemos de trabajar, borramos el fichero con la contraseña.
 
+#### Forma alternativa
+
+Desde gosec1,2,3 con CLI:
+1. `export VAULT_ADDR=https://vault.service.eos.$(dnsdomainname):8200`
+2. `vault auth -method=ldap username=XE*****`
+3. Introducir contraseña de ldap
+4. Operar normalmente (vault read, vault list, vault write...)
+
+
 ### Desde cualquier agente con la API:
+
 1. Conseguimos el token: 
     ~~~ bash
     export TOKEN=$(curl -s --request POST --data '{"password":"'$(cat mipass_work_es)'"}' https://vault.service.eos.$(dnsdomainname):8200/v1/auth/ldap/login/$(whoami) | jq -r .auth.client_token)
