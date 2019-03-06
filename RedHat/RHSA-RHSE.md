@@ -709,7 +709,7 @@ Podemos usar un `tail -f <fichero_log>`
 
 Para comprobar configuraciones que hemos hecho en el syslog: `logger -p facility.severity "string"` nos mandará al fichero de log que esté configurado el mensaje.
 
-### journalctl <a name="journalctl"></a>
+## journalctl <a name="journalctl"></a>
 
 Hay una BB.DD. central de systemd que manda a journald. Los logs se almacenan en el `/run/log/journal` que es un fichero binario indexado. No se conservan entre reinicios (todo esto es el comportamiento por defecto y se puede cambiar).
 
