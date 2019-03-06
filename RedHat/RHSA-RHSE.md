@@ -919,7 +919,7 @@ Ayudas:
 ## Archivos de configuracion
 
 /etc/sysconfig/network-scripts/ifcfg-<name>
-   |_|_|_|
+   |-|-|-|
    |Estática|dinámica|cualquiera de las dos opciones|
    |-|-|-|
    |BOOTPROTO=none||DEVICE=eth0|
