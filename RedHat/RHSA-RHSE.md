@@ -1073,4 +1073,8 @@ Hay que hacer una sincronización inicial (hará lo mismo que el scp), y a parti
 
 Generalmente se copiará con -av, también se puede hacer entre dos directorios locales.
 
+<<<<<<< HEAD
 **IMPORTANTE** si quiero copiar el contenido de un directorio: hay que poner la barra al final, si no ponemos la barra al final, te llevas también el directorio
+=======
+**IMPORTANTE** si quiero copiar el contenido de un directorio: hay que poner la barra al final, si no ponemos la barra al final, te llevas también el directorio
+>>>>>>> master
