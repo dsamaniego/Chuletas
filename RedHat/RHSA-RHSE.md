@@ -40,7 +40,11 @@
    2. [Rotado de logs](#logrotate)
    3. [NTP, configuración del tiempo](#ntp)
 11. [Networking](#network)
-   1. [Conceptos](#net_concept)
+   1. [Conceptos](#net_concepts)
+   2. [Consultas de redes](#network_query)
+   3. [NetworkManager](#nm)
+   4. [nmcli](#nmcli)
+   5. [Archivos de configuracion](#net_config)
    
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
@@ -830,7 +834,7 @@ P.ej: enp0s3
 
 Si se han definido reglas para _udev_ personalizadas o si tenemos definido _biosdevname_ se cambia el nombre de asignación (pXpY).
  
-## Trabajar con las redes <a name="network_work"></a>
+## Consultas de redes <a name="network_query"></a>
  
 `/sbin/ip` --> `ip addr [interfaz]` ~ `ip a [interfaz]`
  
@@ -839,7 +843,7 @@ Si se han definido reglas para _udev_ personalizadas o si tenemos definido _bios
 * Ver las rutas: `traceroute` - `tracepath`, la potente es la primera, ya que nos permite trabajar con UDP (predeterinado), ICMP (-I) o TCP (-T). 
    * Muestran lso enrutadores por los que va pasando.
 
-## Sockets
+### Sockets
 
 Requiere puerto, ip y protocolo.
 
@@ -867,12 +871,12 @@ Requiere puerto, ip y protocolo.
  * /etc/sysconfig/network-scripts/*
    - ifcfg-<conexion> (uno por conexión)
    
-### nmcli 
+## nmcli <a name="nmcli"></a>
 
 Es el CLI para controlar el NetworkManager. 
 
 El NetworkManager no puede estar corriendo a la vez que network (así que hay que enmascarar el network). para ver si está corriendo: `systemctl status NetworkManager`
-
+https://mail.google.com/mail/u/0/#label/Comida%2FDieta/FMfcgxwBVzrDlCxmtbNNpzkgXKsFFFDq
 Tres seccines:
 * dev -- Dispositivos, 4 opciones:
    - show
@@ -905,6 +909,7 @@ Tres seccines:
       - cambiar la IP
       - Cambiar GW
       - Ignore AutoDNS (yes/no) - el antigüo de los ficheros PEERDNS, Si está YES, ignora lso DNSs que le pasa el DHCP y se guarda los que tiene configurados en `/etc/resolv.conf`
+      - Cuando se cambie una conexión de DHCP a manual, hay que poner el parámetro _ipv4.method_
 * net -- Networking
    - on
    - off
@@ -916,24 +921,21 @@ Ayudas:
 * man nmcli-examples(5)
 * man nm-settings(5)
 
-## Archivos de configuracion
+## Archivos de configuracion <a name="net_config"></a>
 
-/etc/sysconfig/network-scripts/ifcfg-<name>
-   
-   Estática|dinámica|cualquiera de las dos opciones
-   --------|--------|-------
-   BOOTPROTO=none| |DEVICE=eth0
-   IPADRR0=172.25.X.10| | NAME="System eth0"
-   GATEWAY0=172.25.X.254| BOOTPROTO=dhcp|ONBOOT=yes
-   DEFROUTE=yes  |  | UUID=fsfds232-2
-   DNS1=172.25.254.254| |USERCTL=yes
+`/etc/sysconfig/network-scripts/ifcfg-<name>`
+ 
+ Estática|Dinámica|Cualquiera de las dos
+ --------|--------|-------
+ BOOTPROTO=none| |DEVICE=eth0
+ IPADRR0=172.25.X.10| | NAME="System eth0"
+ GATEWAY0=172.25.X.254| BOOTPROTO=dhcp|ONBOOT=yes
+ DEFROUTE=yes  |  | UUID=fsfds232-2...
+ DNS1=172.25.254.254| |USERCTL=yes
   
-   
 Cuando cammbienos los ficheros de configuración:
 1. `nmcli con reload`
 2. `nmcli con down <con_id>`
 3. `nmcli con up <con_id>`
-   
-
 
 
