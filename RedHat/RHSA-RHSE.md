@@ -45,6 +45,7 @@
    3. [NetworkManager](#nm)
    4. [nmcli](#nmcli)
    5. [Archivos de configuracion](#net_config)
+   6. [Configuración de Hostname y resolución de nombres](#naming)
    
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
@@ -938,4 +939,28 @@ Cuando cammbienos los ficheros de configuración:
 2. `nmcli con down <con_id>`
 3. `nmcli con up <con_id>`
 
+## Configuración de Hostname y resolución de nombres <a name="naming"></a>
 
+El nombre de la máquina, por defecto, viene en `/etc/hostname` (antes estaba en `/etc/sysconfig/netowrk`), se obtiene con el comando **hostname**.
+
+Se puede meter un restart después de manipular el fichero, la manera "fina" es: `journalctl restart systemd-hostnamed`, pero más fina es con el comando hostnamectl.
+
+* Consultar el status: `hostnamectl status`
+* Cambiar el hostname: `hostnamectl set-hostname nombre`
+
+Estructura de búsqueda (el orden de búsqueda se establece en el fichero `/etc/nsswitch.conf`):
+1. /etc/hosts (mantiene concordancia nombre-ip)
+   * para lanzar consultas aquí: `getent hosts <hostname>`
+2. Consulta al DNS, que está configurado en `/etc/resolv.conf`
+   ~~~ bash
+   search   example.com
+   domain   example.con
+   nameserver  <ip>
+   nameserver  <ip>
+   ...
+   ~~~
+   Si configuramos _search_ y _domain_ se queda con **_domain_**
+   
+Para probar como funciona el DNS:
+   * **nslookup** (este hay que instalarlo como paquete)
+   * **host** ó **dig**
