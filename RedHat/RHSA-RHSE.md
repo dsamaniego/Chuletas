@@ -50,7 +50,7 @@
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
 
-#### Máquinas
+## Máquinas
 
 * Máquina: **foundation12** (172.25.254.12 - 172.25.12.1), user: kiosk / lamia
 * Máquinas virtuales:
@@ -58,7 +58,7 @@
   * **server12** (172.15.12.11): student/student - root/redhat
 * Máquina del profe: **classroom** (172.25.0.254)
 
-#### Controlar las máquinas virtuales
+### Controlar las máquinas virtuales
 
 Programa `rht-vmctrl`, opciones:
 * reset -- restaura la máquina hasta el último snapshot guardado
@@ -67,8 +67,26 @@ Programa `rht-vmctrl`, opciones:
 * save -- hace el snapshot
 * fullreset -- vuelve la VM al origen de los tiempos.
 
-#### Opciones de lenguaje
+### Máquinas casa
 
+Hemos creado 3 máquinas Centos con vagrant en amadablam, con el usuario _student_ (Pass:student) y el _root_ (Pass:vagrant)
+* server: 10.0.100.101
+* desktop1: 10.0.100.102
+* desktop2: 10.0.100.103
+
+Tenemos un snapshot inicial de cada una de ellas en las que ya está creado el suario _student_
+
+## Internacionalización <a name="internacionalizacion"></a>
+
+Control de la configruación de gnome: `gnome-control-center`. Entre otras tiene las siguientes opciones.
+* _region_: Establece las opciones de región y lenguaje (incluidos formatos).
+* _datetime_: Establece opciones de fecha y hora.
+### Opciones de lenguaje <a name="language"></a>
+
+La configuración del lenguaje de cada usuario en gnome se guarda en: /var/lib/AccountService/users/${USER}
+Para establecer un lenguaje para un comando:
+* `$ LANG=<codigo> <comando>`, con de código es uno de los admitidos 
+* `localectl list-locales`, muestra todos los códigos
 * Si accedemos a la máquina por ssh: `loadkeys es` (se pierde cada vez que se reinicie la máquina).
 * Podemos tocar a mano el fichero `/etc/vconsoles.conf`
 * La manera más cómoda es cambiarlo en el entorno gráfico.
