@@ -42,7 +42,7 @@
    4. [nmcli](#nmcli)
    5. [Archivos de configuracion](#net_config)
    6. [Configuración de Hostname y resolución de nombres](#naming)
-12. [Archivado y copia entre sistemas](#tar_rsync)
+12. [Archivado y copia entre sistemas](#empaquetado)
    
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
@@ -290,7 +290,7 @@ Para prevenir esto, como root, ejecutar: `find / -nouser -o -nogroup 2>/dev/null
 
 Todos estos rangos se pueden manipular en el `/etc/login.defs`
 
-### Administración de grupos locales <a name="group_admin"></a>
+### Administración de grupos locales
 
 **Añadir un grupo:** `groupadd [-g <GID>] <nombre_gr>`, si no le ponemos GID, nos da el siguiente GID de los grupos que no son del sistema.
 **Renombrar un grupo:** `groupmod -n <nombre_nuevo> <nombre_antigüo>`  
@@ -299,7 +299,7 @@ Todos estos rangos se pueden manipular en el `/etc/login.defs`
 **Cambiar el grupo principal a un usuario:** `usermod -g <grupo> <username>`  
 **Añadir grupos secundarios:** `usermod -aG <lista_secundarios> <username>`, si no ponemos el -a, sustituiremos los grupos secundarios que tenga por los nuevos.  
 
-### Contraseñas <a name="passwd"></a>
+### Contraseñas
 
 `/etc/shadow` guarda las contraseñas cifradas y las características de vigencia y caducidad d ela contraseña.
 
@@ -734,7 +734,7 @@ Por defecto el journal, no puede tener mas del 10% del sistema de ficheros, y ti
 
 Para ver si está corriendo: `sysemctl status systemd-journald`
 
-#### Procedimiento
+****Procedimiento****  
 ~~~ bash
 # creamos el directorio
 mkdir /var/log/journal
@@ -764,6 +764,8 @@ _Network Time Protocol_ Nos sirve para mantener nuestro servidor en la hora corr
 Se encarga de mantener el reloj de sistema dentro de unos parámetros. Va registrando la sincronía del reloj co respecto al servidor NTP,  con un `driftfile` que se configura en `/etc/chrony.conf`
 
 Salvo casos especiales, configurar los NTP Pool Project como servidores NTP.
+
+**IMPORTANTE** chronyd es incompatible con ntpd por lo que en un sistema tiene que estar funcionando uno u otro.
 
 **Conceptos**
 ** stratum 0 --> siempre sincronizado
@@ -860,6 +862,8 @@ Requiere puerto, ip y protocolo.
    * -p -- proceso que usa el socket
  
  ## NetworkManager <a name="nm"></a>
+ 
+ **IMPORTANTE** NetworkManager es incompatible con network, con lo que en un sistema no pueden estar los dos servicios activos.
  
  De cara al network manager, tenemos que distinguir:
  * _device_name_ Cada una de las conexiones que puede establecer mi equipo.
@@ -962,4 +966,5 @@ Para probar como funciona el DNS:
    * **nslookup** (este hay que instalarlo como paquete)
    * **host** ó **dig**
 
-# Archivado y copia entre sistemas <a name="tar_rsync"></a>
+# Archivado y copia entre sistemas <a name="enpaquetado"></a>
+
