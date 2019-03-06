@@ -36,7 +36,7 @@
    1. [Conexión](#conex_ssh)
    2. [Configuración del servicio](#config_ssh)
 10. [Manejo de logs](#logs)
-   1. [Monitorizacion del sistema](#logging)
+   1. [Monitorización del sistema](#logging)
    2. [Rotado de logs](#logrotate)
    3. [NTP, configuración del tiempo](#ntp)
 11. [Networking](#network)
@@ -502,10 +502,10 @@ Para enviar a varios:
 * `killall -<signal> <patrón_comando>` - usando expresiones regulares
 * `killall -<signal> <user> <patron_comando>` - Manda la señal a todos los comandos que cumplan el patrón del usuario especificado
 * `pkill` Permite usar creterio mas avanzados de selección_
-   * _-U <UID>_ - para usuario
-   * _-G <GUID>_ - para grupo
-   * _-P <PPID>_ - mata a los hijos del proceso padre
-   * _-t <terminal>_ - mata los procesos del terminal
+   * _-U <UID\>_ - para usuario
+   * _-G <GUID\>_ - para grupo
+   * _-P <PPID\>_ - mata a los hijos del proceso padre
+   * _-t <terminal\>_ - mata los procesos del terminal
    
 Si queremos ver los usuarios de un terminal:
 * `who`
@@ -616,7 +616,7 @@ Comandos simples:
 * `ssh <remoteuser>@<remotehost>` - Abre una sesión con un usuario distinto del que tenemos en local.
 * `ssh <user>@<host> <comando>` - Ejecuta este comando en la máquina remota.
 
-## Conexion <a name="conex_ssh"></a>
+## Conexión <a name="conex_ssh"></a>
 
 Cuando se inicia la conexión, se hace un intercambio de claves públicas.
    * Se guardan en una serie de ficheros dentro del directorio oculto en **~/.ssh**
@@ -656,7 +656,7 @@ Para que coja los cambios, `systemctl reload sshd`
 
 # Manejo de logs <a name="logs"></a>
 
-## Monitorizacion del sistema <a name="logging"></a>
+## Monitorización del sistema <a name="logging"></a>
 
 Tenemos dos tipos de logs:
 * Los que hay en /var/log
@@ -709,7 +709,7 @@ Podemos usar un `tail -f <fichero_log>`
 
 Para comprobar configuraciones que hemos hecho en el syslog: `logger -p facility.severity "string"` nos mandará al fichero de log que esté configurado el mensaje.
 
-## journalctl <a name="journalctl"></a>
+### journalctl <a name="journalctl"></a>
 
 Hay una BB.DD. central de systemd que manda a journald. Los logs se almacenan en el `/run/log/journal` que es un fichero binario indexado. No se conservan entre reinicios (todo esto es el comportamiento por defecto y se puede cambiar).
 
