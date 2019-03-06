@@ -13,13 +13,9 @@
    1. [Comandos útiles](#hlp_cmd)
 4. [Ficheros de texto](#txt_files)
    1. [Redirecciones](#redir)
-      1. [Entrada desde un fichero](#file_input)
-      2. [Redirecciones de salida](#output_redir)
    2. [Tuberías](#pipes)
-      1. [tee](#tee)
 5. [Usuarios y grupos](#user_group_mngmt)
    1. [Administración de usuarios](#admin_users)
-      1. [Rangos de UIDs](#UID_range)
    2. [Administración de grupos locales](#group_admin)
    3. [Contraseñas](#passwd)
 6. [Permisos](#perms)
@@ -46,6 +42,7 @@
    4. [nmcli](#nmcli)
    5. [Archivos de configuracion](#net_config)
    6. [Configuración de Hostname y resolución de nombres](#naming)
+12. [Archivado y copia entre sistemas](#tar_rsync)
    
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
@@ -964,3 +961,5 @@ Estructura de búsqueda (el orden de búsqueda se establece en el fichero `/etc/
 Para probar como funciona el DNS:
    * **nslookup** (este hay que instalarlo como paquete)
    * **host** ó **dig**
+
+# Archivado y copia entre sistemas <a name="tar_rsync"></a>
