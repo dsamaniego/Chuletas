@@ -97,11 +97,13 @@ Usar una base de datos:
     automationapi | stop_request               | table | automation
     automationapi | test                       | table | postgres
     (14 rows)
-```
+~~~
 Ahora mos las cosillas que queramos.
 
 ## pgshared en estado inconsistente en Form01
+
 Nos hemos encontrado con que el pgshared está como master pg-0002 y los otros dos están mal.
+
 ~~~ bash
 [cloud-user@bootstrap-1 FORM01 ~]$ ssh 192.168.192.127
 The authenticity of host '192.168.192.127 (192.168.192.127)' can't be established.
@@ -188,10 +190,12 @@ Primero hago un clean para quitar los discarded:
   ]
 }
 ~~~
+
 Como tenemos el pg-0002 como máster, nos tenemos que meter al exhibitor para que cambie a pg-0001.... 
 para eso, abrimos el exhibitor: nos vamos al pg-0002, abrimos el descriptor y cambiamos su nombre de pg-0002 a pg-0001
 
-Luego nos aparecerá como pg-0001 y tendremos que parar todos menos el pg que tenga la ip del pg-0002 antigüo y luego ir añadiendo el syincrono y el asíncrono
+Después de esto, en DCOS, nos aparecerá como pg-0001 y tendremos que parar todos menos el pg que tenga la ip del pg-0002 antigüo y luego ir añadiendo el sincrono y el asíncrono
+
 
 ### Backups
 

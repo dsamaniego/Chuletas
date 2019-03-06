@@ -1,21 +1,27 @@
 # Tabla de contenidos
-[Introducción al curso](#introduccion)
+0. [Introducción al curso](#introduccion)
+   1. [Internacionalización](#intennacionalizacion)
+      1. [Opciones de lenguaje](#language)
 1. [Acceso a la línea de comandos](#consola)
    1. [Entorno gráfico](#graphic_console)
    2. [Terminales y consolas](#console)
 2. [Manejo de archivos con la línea de comandos](#manage_files)
    1. [Jerarquía de directorios](#file_hierachy)
    2. [Conceptos](#file_concepts)
-   3. [Manejo de ficheros](#file_mngmt)
+   3. [Manejo de fichreros](#file_mngmt)
    4. [File Globbing](file_globbing)
    5. [Sustitución de comandos](#command_subs)
 3. [Obtener ayuda](#help)
    1. [Comandos útiles](#hlp_cmd)
 4. [Ficheros de texto](#txt_files)
    1. [Redirecciones](#redir)
+      1. [Entrada desde un fichero](#file_input)
+      2. [Redirecciones de salida](#output_redir)
    2. [Tuberías](#pipes)
+      1. [tee](#tee)
 5. [Usuarios y grupos](#user_group_mngmt)
    1. [Administración de usuarios](#admin_users)
+      1. [Rangos de UIDs](#UID_range)
    2. [Administración de grupos locales](#group_admin)
    3. [Contraseñas](#passwd)
 6. [Permisos](#perms)
@@ -26,31 +32,13 @@
    1. [Comandos](#proc_cmd)
    2. [Señales](#signals)
    3. [Monitorización de procesos](#proc_monitoring)
-8. [Control de servicios y demonios](#systemctl)
-   1. [Comando _systemctl_](#systemctl)
-9. [Configurando y asegurando el servicio SSH](#openssh)
-   1. [Conexión](#conex_ssh)
-   2. [Configuración del servicio](#config_ssh)
-10. [Manejo de logs](#logs)
-   1. [Monitorización del sistema](#logging)
-   2. [Rotado de logs](#logrotate)
-   3. [NTP, configuración del tiempo](#ntp)
-11. [Networking](#network)
-   1. [Conceptos](#net_concepts)
-   2. [Consultas de redes](#network_query)
-   3. [NetworkManager](#nm)
-   4. [nmcli](#nmcli)
-   5. [Archivos de configuracion](#net_config)
-   6. [Configuración de Hostname y resolución de nombres](#naming)
-12. [Archivado y copia entre sistemas](#empaquetado)
-   1. [Empaquetado](#tar)
-   2. [Copia entre sistemas](#copy_b_sys)
-   3. [Sincronización segura entre sistemas](#rsync)
+8. [Control de servicios y demonios](#systemd)
+   1. [Comando _systemctl](#systemctl)
    
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
 
-## Máquinas
+#### Máquinas clase
 
 * Máquina: **foundation12** (172.25.254.12 - 172.25.12.1), user: kiosk / lamia
 * Máquinas virtuales:
@@ -58,7 +46,7 @@
   * **server12** (172.15.12.11): student/student - root/redhat
 * Máquina del profe: **classroom** (172.25.0.254)
 
-### Controlar las máquinas virtuales
+##### Controlar las máquinas virtuales
 
 Programa `rht-vmctrl`, opciones:
 * reset -- restaura la máquina hasta el último snapshot guardado
@@ -67,7 +55,7 @@ Programa `rht-vmctrl`, opciones:
 * save -- hace el snapshot
 * fullreset -- vuelve la VM al origen de los tiempos.
 
-### Máquinas casa
+#### Máquinas casa
 
 Hemos creado 3 máquinas Centos con vagrant en amadablam, con el usuario _student_ (Pass:student) y el _root_ (Pass:vagrant)
 * server: 10.0.100.101
@@ -81,6 +69,7 @@ Tenemos un snapshot inicial de cada una de ellas en las que ya está creado el s
 Control de la configruación de gnome: `gnome-control-center`. Entre otras tiene las siguientes opciones.
 * _region_: Establece las opciones de región y lenguaje (incluidos formatos).
 * _datetime_: Establece opciones de fecha y hora.
+
 ### Opciones de lenguaje <a name="language"></a>
 
 La configuración del lenguaje de cada usuario en gnome se guarda en: /var/lib/AccountService/users/${USER}
@@ -95,7 +84,9 @@ Para establecer un lenguaje para un comando:
 
 ## Entorno gráfico <a name="graphic_console"></a>
 
-El entorno gráfico por defecto en RHEL7 es Gnome3, que corre sobre XWConceptos<a name="file_conceptsindow. Tiene dos modos: _classic_ y _modern_.
+El entorno gráfico por defecto en RHEL7 es Gnome3, que corre sobre XW
+
+Tiene dos modos: _classic_ y _modern_.
 
 Cuando se entra por primera vez, se hace un setup inicial al ejecutarse `/usr/libexec/gnome-initial-setup`, (en cualquier momento podemos volver a lanzarlo para reconfigurar el entorno), después arranca el _Gnome Help_, al que siempre se puede ir pulsando **F1** o, desde un terminal ejecutando `yelp`, o desde el menú: **Application --> Documentation --> Help**.
 
@@ -120,7 +111,7 @@ En una jerarquí a LVM se encapsulan los directorios, como mínimo:
 * **Persistencia**: Se refiere a la resistencia a "sobrevivir" a los reinicios, los ficheros persistentes guardan cambios que se conservan entre reinicios. **IMPORTANTE: En el exámen todo tiene que quedar persistente, ya que hay varios reinicios.**
 * **Runtime**: Cambios que se conservan mientras está encendida la máquina.
 
-## Manejo de ficheros<a name="file_mngmt"></a>
+## Manejo de ficheros <a name="file_mngmt"></a>
 
 * `touch`: Crea un fichero, si no existe, y le cambia el _timestamp_ si existe.
 * `stat`: Da información relevante sobre el fichero
@@ -189,7 +180,6 @@ Dispositivos especiales del sistema:
 
 Ojo, los operadores de fusión más modernos ( &>file &>>file) puede que no funcionen en shells antigüas.
 
-
 ### Entrada desde un fichero <a name="file_input"></a>
 
 Podemos redirigir la salida como entrada a otro programa (por ejemplo en un bucle for):
@@ -229,8 +219,8 @@ La configuración del usuario está en el fichero `/etc/passwd`, que contiene so
 4. GID, grupos del usuario, 1 principal y el resto secundarios.
    Cuando creamos el usuario se crea un grupo principal con el mismo nombre que el usuario
 5. GECOS: String que usamos para identificar el usuario.
-7. $HOME: directorio raíz del usuario
-8. shell del usuario (podemos tener o `/sbin/nologin` -para evitar que el usuario no haga login ,por ejemplo, si va a usar servicios del sistema pero no necesita acceso a la shell de sistema ni manipular ficheros del sistema; o `/bin/false`, si no queremso que use nada de nuestro sistema).
+6. $HOME: directorio raíz del usuario
+7. shell del usuario (podemos tener o `/sbin/nologin` -para evitar que el usuario no haga login ,por ejemplo, si va a usar servicios del sistema pero no necesita acceso a la shell de sistema ni manipular ficheros del sistema; o `/bin/false`, si no queremso que use nada de nuestro sistema).
 
 Configuración de grupos, `/etc/group`:
 1. nombre
@@ -312,7 +302,7 @@ Para prevenir esto, como root, ejecutar: `find / -nouser -o -nogroup 2>/dev/null
 
 Todos estos rangos se pueden manipular en el `/etc/login.defs`
 
-### Administración de grupos locales
+### Administración de grupos locales <a name="group_admin"></a>
 
 **Añadir un grupo:** `groupadd [-g <GID>] <nombre_gr>`, si no le ponemos GID, nos da el siguiente GID de los grupos que no son del sistema.
 **Renombrar un grupo:** `groupmod -n <nombre_nuevo> <nombre_antigüo>`  
@@ -321,7 +311,7 @@ Todos estos rangos se pueden manipular en el `/etc/login.defs`
 **Cambiar el grupo principal a un usuario:** `usermod -g <grupo> <username>`  
 **Añadir grupos secundarios:** `usermod -aG <lista_secundarios> <username>`, si no ponemos el -a, sustituiremos los grupos secundarios que tenga por los nuevos.  
 
-### Contraseñas
+### Contraseñas <a name="passwd"></a>
 
 `/etc/shadow` guarda las contraseñas cifradas y las características de vigencia y caducidad d ela contraseña.
 
@@ -426,7 +416,7 @@ Se puede meter otro octeto de permisos, en la x, si la hay, s, si no la hay una 
    * ejemplo: passwd --> se ejecuta como usuario root.
 * Grupo: **setgid**
    * Fichero: El archivo se ejecuta como el grupo propietario
-   * Directorio: _Directorios colaborativos_, todos los ficheros y directorios que se creen dentro tienen como propietario el grupo propietario, no el del usuario que lo creó. Lo lógico en los directorios colaborativos es que sea root el propietario del directorio. Porque si es de otro usuario, ese usuario, al ser dueño del directorio, podría borrar cualquier fichero.
+   * Directorio: Directorios colaborativos, todos los fichros y directorios que se creen dentro tienen como propietario el grupo propietario, no el del usuario que lo creó.
    * Los permisos que se les suele dar a los directorios colaborativos son 2770
 * sticky-bit:
    * No tiene sentido en ficheros.
@@ -521,10 +511,10 @@ Para enviar a varios:
 * `killall -<signal> <patrón_comando>` - usando expresiones regulares
 * `killall -<signal> <user> <patron_comando>` - Manda la señal a todos los comandos que cumplan el patrón del usuario especificado
 * `pkill` Permite usar creterio mas avanzados de selección_
-   * _-U <UID\>_ - para usuario
-   * _-G <GUID\>_ - para grupo
-   * _-P <PPID\>_ - mata a los hijos del proceso padre
-   * _-t <terminal\>_ - mata los procesos del terminal
+   * _-U <UID>_ - para usuario
+   * _-G <GUID>_ - para grupo
+   * _-P <PPID>_ - mata a los hijos del proceso padre
+   * _-t <terminal>_ - mata los procesos del terminal
    
 Si queremos ver los usuarios de un terminal:
 * `who`
@@ -546,8 +536,6 @@ Sistemas por debajo de 1 es raro que tengan esperas.
 
 Por encima de 1, hay que analizar qué es lo que está pasando... si estoy paginando (las escrituras son caras en cuanto a la carga), si la red nos lastra, etc... 
 
-Para entender la carga: (https://www.tecmint.com/understand-linux-load-averages-and-monitor-performance/)
-
 ### campos del TOP
 VIRT --> se corresponde con (VSZ del ps).
 RES --> MEmoria física (RSS en ps)
@@ -557,7 +545,7 @@ S --> Estado del proceso
 Shift+p --> te lo ordena por consumo de procesador
 Shift+m --> te lo ordena por consumo de memoria
 
-# Control de servicios y demonios <a name="systemctl"></a>
+# Control de servicios y demonios <a name="systemd"></a>
 
 * **systemd** es el análogo al **init** de versiones anteriores.
    * controla los arranques de servicios y demonios del sistema.
@@ -594,6 +582,7 @@ Estados:
    * active (runing, exited, waiting, inactive)
 
 ### Usos
+
 * Comprobar si un servicio está activo: `systemctl is-active name.type`
 * Comprobar si está preparado para ejecutarse en el inicio: `systemctl is-enabled name.type`
 * Listar estado de los servicios `systemctl list-units --type=service` Nos muestra las activas, con _-all_ muestra todas, incluidas las inactivas.
@@ -607,12 +596,12 @@ Estados:
    * restart
    * reload (reinicio "gracefull")
    
- ### Dependencias de unidades
+ #### Dependencias de unidades
  
 `systemctl list-dependencies unit` Muestra las dependencias de la unidad, es decir, las unidades que la unidad en cuestión necesita para levantar.
 `systemctl list-dependencies unit --reverse` Lista las unidades que dependen de nuestra unidad.
 
-### Enmascaramiento.
+#### Enmascaramiento
 
 Para que ni el sistema ni un usuario levanten un servicio, se les enmascara, de forma que se borra el link simbólico que apunta al servicio, así nos aseguramos de que nadie accidentalmente nadie arranca el servicio.
 
@@ -620,461 +609,3 @@ Esto lo podemos hacer para que no podamos levantar dos servicios que entran en c
 
 `systemctl [mask|umask] <unit>` Una vez hecho esto, no podrá arrancar bajo ningún concepto.
 
-# Configurando y asegurando el servicio SSH <a name="openssh"></a>
-
-journalctl**OpenSSH - _Open Secure Shell_** - permite cifrar usando claves asimétricas entre dos máquinas.
-
-Qué necesitamos:
-* Una cuenta en el sistema remoto (IMPORTANTE: el usuario debe existir en el sistema remoto).
-* Una shell
-
-Podemos ver los usuarios que están conectados con `w -f`, que nos muestra los usuarios conectados, tanto en local, como remojournalctltos.
-
-Comandos simples:
-* `ssh <remotehost>` - Sesión con el mismo usuario que el que tenemos en local.
-* `ssh <remoteuser>@<remotehost>` - Abre una sesión con un usuario distinto del que tenemos en local.
-* `ssh <user>@<host> <comando>` - Ejecuta este comando en la máquina remota.
-
-## Conexión <a name="conex_ssh"></a>
-
-Cuando se inicia la conexión, se hace un intercambio de claves públicas.
-   * Se guardan en una serie de ficheros dentro del directorio oculto en **~/.ssh**
-   * **known_hosts**: Contiene la clave de host de cada una de las máquinas a las que nos hemos conectado desde nuestra máquina.
-      * Si hemos tenido que reinstalar el servidor, se me han vuelto a generar la clave de máquina, y nos dará un warning de man-in-the-middle.
-     * Habrá que borrar la línea en el known_hosts y volver a tirar el ssh.
-     * Hay un fichero general para toda la máquina **/etc/ssh/ssh_known_hosts**
-     * En el servidor, la lista de claves está en **/etc/ssh/\*key\*** (.pub => públicas, las que no tienen nada, privadas). Si queremos 
-  * **authorized_keys**: Se guardan las claves públicas de los usuarios remotos que pueden hacer login con mi usuario en mi máquina sin meter passwd.
-
-### Configuración de la conexión sin contraseña.
-
-Para poder acceder por ssh a un host remoto desde nuestro host, tenemos que intercambiar las claves.
-
-~~~ bash
-# generamos el par de claves
-$ ssh-keygen -t <alg_cifrado> -b <bytes_clave>
-# copiamos la clave pública al host remoto -nos pedirá la passwd del <user> en el <server>
-$ ssh-copy-id -i [ruta_clave_privada] <user>@<server>
-~~~
-
-Importante, los permisos de los ficheros:
-* claves públicas: 644
-* claves privadas: 600
-* autorized_keys: 600
-
-## Configuración del servicio <a name="config_ssh"></a>
-
-Fichero de configuracion: **/etc/ssh/sshd_config**. No suele ser habitual a root por ssh, es más lógico conectarse con un usuario que tenga capacidad de sudo.
-
-Parámetros:
-* **PermitRootLogin** (_yes/no_) permite o deniega el acceso por ssh con root.
-   * **PermitRootLogin _without-password_**  No permite el método passwd de autenticación, sólo permitirá con claves asimétricas.
-* **PasswordAutentication** (_yes/no_) Se permite el acceso con passwd o sólo con claves.
-
-Para que coja los cambios, `systemctl reload sshd`
-
-# Manejo de logs <a name="logs"></a>
-
-## Monitorización del sistema <a name="logging"><\a>
-
-Tenemos dos tipos de logs:
-* Los que hay en /var/log
-* Los colectados por systemd-journald, que no persisten entre reinicios, genera un registro en binario que podemos consultar con **journalctl**.
-   * Mensajes del kernel.
-   * Arranques.
-   * Mensajes de demonios que se inician o ejecutan mal.
-* Los colectados por **rsyslog**, cualquier aplicación que instalemos, la podemos acoplar a este sistema de log
-
-### /var/log
-
-**/var/log/messages** - la mayoría de los mensajes menos los que tengan un fichero específico.  
-**/var/log/secure** - relacionado con autenticaciones y seguridad  
-**/var/lgo/maillog** - relacionado con los correos electrónicos  
-**/var/log/cron** - relacionado con las tareas programadas  
-**/var/log/boot.log** - relacionado con el arranque  
-
-### rsyslog
-
-Procesa los mensajes _facility.severity_
-* **facility** en `man 5 rsyslog.conf`
-* **severity** 8 niveles
-
-Fichero de configuración en `/etc/rsyslog.conf` o en cualquier fichero `/etc/rsyslog.d/`.
-
-En el fichero de configuración, los logs vienen configurados en la forma: _facility.severity    <ruta_fich_log>_:
-* Se pueden usar comodines para la severity y facility.
-* Podemos tener varios pares facility.severity en la misma línea.
-* Se pueden negar facilities con la severity _none_.
-* en el mail, fijarse que viene `mail.* -/var/log/mail.log` el guión idica que los logs se hacen de forma asíncrona.
-
-## Rotado de logs<a name="logrotate"></a>
-
-Fichero de configuracion: `/etc/logrotate.conf` o en `/etc/logrotate.d/*`
-Cuando se hago un rotado, se guardará el antigüo con un timestamp.
-Después de cierto tiempo, se borran del histórico.
-
-Si no rota correctamente habría que revisar el cron.
-
-Mas información `man 8 logrotate`
-
-### Analizando una entrada de syslog.
-
-Las líneas viene en el formato:
-timestamp:host:programa:mensaje
-
-Podemos usar un `tail -f <fichero_log>`
-
-### Comando _logger_
-
-Para comprobar configuraciones que hemos hecho en el syslog: `logger -p facility.severity "string"` nos mandará al fichero de log que esté configurado el mensaje.
-
-## journalctl<a name="journalctl"></a>
-
-Hay una BB.DD. central de systemd que manda a journald. Los logs se almacenan en el `/run/log/journal` que es un fichero binario indexado. No se conservan entre reinicios (todo esto es el comportamiento por defecto y se puede cambiar).
-
-Para revisar todas las entradas de log que el sistema guarda usamos el comando **journalctl** hay que lanzarlo con root. 
-* **journalctl -n \<num>** Muestra las <num\> últimas líneas, sin no se le da valor, el defecto es 10
-* **journalctl -p \<severity>** Muestra los mensajes de cierta severidad y superiroes.
-* **journalctl -f** Va refrescando
-* **journal --since "YYYY-MM-DD_hh:mm:ss" --until "yyyy-mm-dd_hh:mm:ss"**
-   * Admite modificadores: yesteday, today, ...
-* **journalctl -o verbose** 
-   * Modificadores del comando, me dan facilidad para acotar ciertas entradas.
-      - _COMM -- comando
-      - _PID -- busca por PID
-      - _EXE -- ruta del comando
-      - _GID -- buscar por GID
-      - _SYSTEMD_UNIT -- busca pro unidad de systemd
-   
-### Haciendo persistente el journal de systemd
-
-Tenemos que crear una ruta paralela para hacerlo psersistente `/var/log/journal`, que tiene un rotado mensual, y donde se guardarán los logs de journal.
-
-Fichero de configuración en `/etc/systemd/journald.conf`.
-
-Por defecto el journal, no puede tener mas del 10% del sistema de ficheros, y tiene que dejar al menos el 15% libre. Estos límites se tocan el el fichero. Para ver estos límites: `journalctl |head -n 2`
-
-Para ver si está corriendo: `sysemctl status systemd-journald`
-
-**Procedimiento**
-
-~~~ bash
-# creamos el directorio
-mkdir /var/log/journal
-chown root:systemd-journal /var/log/journal
-chmod 2755 /var/log/journal
-# Pasamos una señal al journal para que empiece a trabajar en la nueva ruta
-killall -USR1 systemd-journald
-# Podemos forzar el rotado:
-killall -USR2 systemd-journald
-~~~
-
-Ahora, como tenemos varios rebotes, podemos ver lo que hay desde el rebote _n_ con `journalctl -b -n` 
-
-## NTP. Configuración del tiempo <a name="ntp"></a>
-
-_Network Time Protocol_ Nos sirve para mantener nuestro servidor en la hora correcta.
-
-* **timedatectl** nos va a dar el status de tiempo del sistema.
-* **timedateclt list-timezones** da un listado de TZ.
-* **tzselect** nos ayuda a seleccionar la TimeZone
-* **timedatectl set-timezone <nombre\>** Cambia la hora a la de la TZ especificada
-* **timedatectl set-time hh:mm:ss** Cambia la hora (conviene antes de sincronizar con el NTP
-* **timedatectl set-ntp true** activa NTP
-
-### chronyd
-
-Se encarga de mantener el reloj de sistema dentro de unos parámetros. Va registrando la sincronía del reloj co respecto al servidor NTP,  con un `driftfile` que se configura en `/etc/chrony.conf`
-
-Salvo casos especiales, configurar los NTP Pool Project como servidores NTP.
-
-**IMPORTANTE** chronyd es incompatible con ntpd por lo que en un sistema tiene que estar funcionando uno u otro.
-
-**Conceptos**
-** stratum 0 --> siempre sincronizado
-** stratum 1 --> sincronizado sobre el
-** stratum 2 --> sincronizado con stratum 1.
-
-Tenemos una serie de capas por estratos, servidores dentro del mismo estrato, se denominan _peer_ y el el estrato superior, _server_.
-
-Todo se configura con `/etc/chrony.conf`
-* se pude configurar mas de un server y un peer.
-* server IP iburst --> 4 ráfagas de sincronización para sincronizar lo más rápido posible.
-* para ver contra quién nos estamos sincronizando: `chronyc sources`
-* El puerto TPC/UDP es el puerto 123 (ojo si queremos sincronizar con un servidor NTP externo a nuestra red, abrir puerto firewall).
-* para sincronizar, hay que reiniciar `systemctl restart chronyd`
-
-# Networking <a name="network"></a>
-
-## Conceptos <a name="net_concept"></a>
-
-### IPv4 - modelo de 4 capas
-
-* **Capa 4** - Aplicacion (SSH, HTTP, HTTPS, NFS, CIFS, SMTP, ...), los datos que se mueven están relacionados con estos protocolos.
-* **Capa 3** - Transporte (TCP, UDP) -- fichero `/etc/services`, aquí es donde tenemos que mirar los puertos de servicios (menos si está SELinux activo).
-   * Aquí hablaresmo de puertos e IP (socket)
-* **Capa 2** - Red o internet, transporta los datos a través de la red a un host, capa de conexiones entre redes. (ICMP).
-* **Capa 1** - Física o enlace, relacionado con las MACs (802.3 - Ethernet, 802.11 - Wireless), que deben identificar de manera unívoca una interfaz de red.
-
-### Direcciones IP
-4 octetos (32 bits), incluyen la dir de red y de host.
-
-* Todos los hosts de la misma subred se comunican sin enrutador entre ellos.
-* En una misma subred no puede haber dos hosts con la misma dirección de host.
-* Para que una máquina salga a otras redes, necesitamos un gateway o enrrutador (que tiene que ser de su red), que tiene una tabla de rutas a otras redes.
-
-### Enrrutamiento
-
-Para ver la tabla de rutas `netstat -nr` ó `ip route`.
-El gateway nos sirve para enrutar a una red que no es la nuestra, para llegar a una ruta que no sea la de nuestro GW por defecto, tendrá que tener una ruta estática.
-
-En la tabla de rutas:
-0.0.0.0/0 --> GW por defecto
-otra subred --> GW de esta subred (esto es la ruta estática)
-
-Cada interfáz de red, tendrá su propia subred.
-Para traducir las IPs a nombres, se usa DNS.
-
-La configuracion la podemos tener automática (DHCP) o estática.  
-Buscar "IP alias" (es una forma de sobrecargar las interfaces de red, una interfáz no tiene porqué tener una sola IP estática).
-
-### Nomenclatura de interfaces de networking.
-
-Estándar: eth0, eth1, eth2, ... Problema: el demonio _udev_ carga lo que tiene asignado, pero si se borra un intefáz o se rebota, puede dar probleams.
-
-Nombrado de interfaces: iioN
-* ii puede ser
-   * Ethernet: en-...
-   * Wireless: wl-...
-   * WWAN: ww-
- * o puede ser:
-   * o - incorporado
-   * s - hot-plug conexión
-   * p - ranura pci
-   * n es el número de adaptador.
- 
-P.ej: enp0s3
-
-Si se han definido reglas para _udev_ personalizadas o si tenemos definido _biosdevname_ se cambia el nombre de asignación (pXpY).
- 
-## Consultas de redes <a name="network_query"></a>
- 
-`/sbin/ip` --> `ip addr [interfaz]` ~ `ip a [interfaz]`
- 
-* Chequear la intefáz: `ip -s link show [interfaz]`
-* Chequear conexión: `ping -c1 <ip/DNS>` (así lo podemos usar en un script).
-* Ver las rutas: `traceroute` - `tracepath`, la potente es la primera, ya que nos permite trabajar con UDP (predeterinado), ICMP (-I) o TCP (-T). 
-   * Muestran lso enrutadores por los que va pasando.
-
-### Sockets
-
-Requiere puerto, ip y protocolo.
-
-`netstat` (en desuso): -usar mejor la opción con _n_
-* `netstat -tulpan`
-* `netstat -putona`
-
-`ss` - Muestra estadísticas de los sockets
-* Nos interesa sobre todo la conexión local.
-* Opciones:
-   * -n -- numérico en vez de nombres (con nombres puede eternizarse para conectar con DNS)
-   * -t -- TCP
-   * -u -- UDP
-   * -l -- mustra los sockets a la escucha
-   * -a -- muestra todos los sockets
-   * -p -- proceso que usa el socket
- 
- ## NetworkManager <a name="nm"></a>
- 
- **IMPORTANTE** NetworkManager es incompatible con network, con lo que en un sistema no pueden estar los dos servicios activos.
- 
- De cara al network manager, tenemos que distinguir:
- * _device_name_ Cada una de las conexiones que puede establecer mi equipo.
- * _conexion_ 
- 
- Ficheros de configuración:
- * /etc/sysconfig/network-scripts/*
-   - ifcfg-<conexion> (uno por conexión)
-   
-## nmcli <a name="nmcli"></a>
-
-Es el CLI para controlar el NetworkManager. 
-
-El NetworkManager no puede estar corriendo a la vez que network (así que hay que enmascarar el network). para ver si está corriendo: `systemctl status NetworkManager`
-
-Tres seccines:
-* dev -- Dispositivos, 4 opciones:
-   - show
-   - status
-   - connect
-   - disconnect
-* con -- Conexiones, hay que pasarle el nombre de la conexión _CON_ID_
-   - add
-      - Con ip estática, necesitamos
-         - Nombre de conexión
-         - tipo de conexión
-         - onboot (Sólo una a YES)
-         - ipv4
-         - network
-         - nombre del dispositivo
-         - GW
-      - Con DHCP
-         - Nombre de conexión
-         - tipo de conexión
-         - nombre del dispositivo
-   - up
-   - down
-   - show
-   - reload
-   - delete
-   - edit
-   - mod <CON_ID>, podemos modificar parámetros de la conexión.
-      - autoconnect(yes/no) - Es el ONBOOT del los ficheros de configuración, OJO, que solo puede haber uno en el arranque.
-      - Añadir/Cambiar DNS
-      - cambiar la IP
-      - Cambiar GW
-      - Ignore AutoDNS (yes/no) - el antigüo de los ficheros PEERDNS, Si está YES, ignora lso DNSs que le pasa el DHCP y se guarda los que tiene configurados en `/etc/resolv.conf`
-      - Cuando se cambie una conexión de DHCP a manual, hay que poner el parámetro _ipv4.method_
-* net -- Networking
-   - on
-   - off
-   
-Cada configuración que veamos aquí tiene su reflejo en el fichero de configuración. (`/etc/sysconfig/network-scripts/ifcfg-<conex>`).
-
-Ayudas:
-* man nmcli
-* man nmcli-examples(5)
-* man nm-settings(5)
-
-## Archivos de configuracion <a name="net_config"></a>
-
-`/etc/sysconfig/network-scripts/ifcfg-<name>`
- 
- Estática|Dinámica|Cualquiera de las dos
- --------|--------|-------
- BOOTPROTO=none| |DEVICE=eth0
- IPADRR0=172.25.X.10| | NAME="System eth0"
- GATEWAY0=172.25.X.254| BOOTPROTO=dhcp|ONBOOT=yes
- DEFROUTE=yes  |  | UUID=fsfds232-2...
- DNS1=172.25.254.254| |USERCTL=yes
-  
-Cuando cammbienos los ficheros de configuración:
-1. `nmcli con reload`
-2. `nmcli con down <con_id>`
-3. `nmcli con up <con_id>`
-
-## Configuración de Hostname y resolución de nombres <a name="naming"></a>
-
-El nombre de la máquina, por defecto, viene en `/etc/hostname` (antes estaba en `/etc/sysconfig/netowrk`), se obtiene con el comando **hostname**.
-
-Se puede meter un restart después de manipular el fichero, la manera "fina" es: `journalctl restart systemd-hostnamed`, pero más fina es con el comando hostnamectl.
-
-* Consultar el status: `hostnamectl status`
-* Cambiar el hostname: `hostnamectl set-hostname nombre`
-
-Estructura de búsqueda (el orden de búsqueda se establece en el fichero `/etc/nsswitch.conf`):
-1. /etc/hosts (mantiene concordancia nombre-ip)
-   * para lanzar consultas aquí: `getent hosts <hostname>`
-2. Consulta al DNS, que está configurado en `/etc/resolv.conf`
-   ~~~ bash
-   search   example.com
-   domain   example.con
-   nameserver  <ip>
-   nameserver  <ip>
-   ...
-   ~~~
-   Si configuramos _search_ y _domain_ se queda con **_domain_**
-   
-Para probar como funciona el DNS:
-   * **nslookup** (este hay que instalarlo como paquete)
-   * **host** ó **dig**
-
-# Archivado y copia entre sistemas <a name="enpaquetado"></a>
-
-## Empaquetado <a name="tar"></a>
-TAR es una utilidad que permite empaquetar y/o comprimir una serie de ficheros en un solo fichreo.
-
-Se le pueden pasar los flags con o sin guión:
-* c --> crear
-* x --> extraer
-* t --> enumerar
-* v --> modo verboso
-* f --> donde está el fichero (el fichero tiene que ir detrás de la f).
-* p --> mantiene los permisos (de ejecución).
-
-La sentencia es: `tar <flags> archivo.tar <fich_1>...<fich_n>`
-El empaquetado no conserva la barra, así la descompresión es relativa al directorio donde esté trabajando.
-
-El empaquetado empaqueta los fichreros y directorios que el usuario pueda leer. Almacena usuario, grupo y permisos, pero solo cuando descomprimamos con root conservaremos eso, si no, cogerán los del usuario que descomprima.
-
-Si queremos conservar SELinux y ACLs, tendremos que usar el flag **--xattrs**
-
-### Empaquetado con compresion
-
-Tipos de compresión permitidos:
-* gzip (flag **z**) -- Más rápido y más antigüo
-* bzip2 (flag **j**) -- Mejor compresion
-* xz (flag **J**) -- Mejor compresión de todos
-
-Necesitamos tener instalado el paquete del compresor.
-Al descomprimir, el tar detecta que tipo de algoritmo de compresión se usó, por lo que no es necesaro pasarle el flag.
-
-## Copia entre sistemas <a name="copy_b_sys"></a>
-
-### scp
-
-Para copiar ente sistemas, se usa el comando **scp**, que se hace sobre ssh.
-
-Formato:
-* scp remoto local --> Para traernos la copia
-* scp local remoto --> Para llevarnos la copia
-
-Admite recursividad con el flag **-r**
-
-### sftp
-
-Es un ftp que va sobre ssh, como en el ftp sin cifrar, se nos abre una subshell para interactuar con el servidor remoto.
-
-~~~bash
-$ sftp servidor
-user@servidor password: xxxx
-Connected to servidor.
-sftp>
-sftp> cd dir
-sftp> get fichero (se trae el fichero)
-#####
-sftp> put fichero (se lleva el fichero)
-####
-~~~
-
-Admite los siguientes comandos: ? (ayuda), (l)cd, ls, mkdir, rmdir, (l)pwd, (m)get, (m)put, exit
-
-## Sincronización segura entre sistemas <a name="rsync"></a>
-
-**rsync** es una herramienta apara copiar de forma segura ficheros entre sistemas (se basa en ssh).
-
-Hace un movimiento incremental entre directorios (estén o no en el mismo sistema). Se usa para backpus y recuperación de desastres (tenemos que tener una copia offline sincronizada con el sistema que queramos recuperar).
-
-Hay que hacer una sincronización inicial (hará lo mismo que el scp), y a partir de ahí sólo llevará los cambios.
-
-* -n: hacer un _dryrun_, con lo que nos aseguramos que no vamos a hacer ninǵu destrozo.
-* -a: reune los flags:
-   * -r: recursivo
-   * -l: mantiene links simbólicos
-   * -p: mantiene permisos
-   * -t: mantiene timestamps
-   * -g: mantine las propiedades de grupo
-   * -o: mantiene propietario
-   * -D: sincroniza archivos de dispositivo
-* -H: se trae los hardLinks (así evitas tener que traerte dos veces los mismos datos).
-* -v: verboso
-* -A: mantiena ACLs
-* -x: mantiene SELinux
-
-Generalmente se copiará con -av, también se puede hacer entre dos directorios locales.
-
-<<<<<<< HEAD
-**IMPORTANTE** si quiero copiar el contenido de un directorio: hay que poner la barra al final, si no ponemos la barra al final, te llevas también el directorio
-=======
-**IMPORTANTE** si quiero copiar el contenido de un directorio: hay que poner la barra al final, si no ponemos la barra al final, te llevas también el directorio
->>>>>>> master

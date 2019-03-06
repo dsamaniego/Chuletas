@@ -19,3 +19,14 @@ Si hay algo que en los DC/OS no podamos ver bien, podemos subir el nivel de logi
     "logging.level.com.datio.mesos.reporter": "DEBUG",
 
 curl https://pgmeme.
+
+# Conexiones de "emergencia" a los DCOS...
+
+Si por lo que sea se nos ha roto la conexión a los DCOS con nuestro usuario XE... podemos usar el usuario internalDeployer.
+
+la contraseña está en el id2 en rutas tipo /data/us/live01.daas.us.igrupobbva/pass/ldap/internalDeployer
+
+# DNSmasq
+
+Para usar con la VPNaaS seguir las instrucciones del siguiente [documento](https://docs.google.com/document/d/1cjZgi1jI-8CRApHlqfOeEc1vJ4e0eAD7pv12gYRYrYk/edit?ts=5c077bdb)
+
