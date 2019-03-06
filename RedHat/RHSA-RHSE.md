@@ -919,16 +919,20 @@ Ayudas:
 ## Archivos de configuracion
 
 /etc/sysconfig/network-scripts/ifcfg-<name>
-   |-|-|-|
-   |Estática|dinámica|cualquiera de las dos opciones|
-   |-|-|-|
-   |BOOTPROTO=none||DEVICE=eth0|
-   |IPADRR0=172.25.X.10| | NAME="System eth0"|
-   |GATEWAY0=172.25.X.254| BOOTPROTO=dhcp|ONBOOT=yes|
-   |DEFROUTE=yes  |  | UUID=fsfds232-2|
-   |DNS1=172.25.254.254||USERCTL=yes|
-   |-|-|-|
    
+   Estática|dinámica|cualquiera de las dos opciones
+   --------|--------|-------
+   BOOTPROTO=none| |DEVICE=eth0
+   IPADRR0=172.25.X.10| | NAME="System eth0"
+   GATEWAY0=172.25.X.254| BOOTPROTO=dhcp|ONBOOT=yes
+   DEFROUTE=yes  |  | UUID=fsfds232-2
+   DNS1=172.25.254.254| |USERCTL=yes
+  
+   
+Cuando cammbienos los ficheros de configuración:
+1. `nmcli con reload`
+2. `nmcli con down <con_id>`
+3. `nmcli con up <con_id>`
    
 
 
