@@ -1,5 +1,7 @@
 # Tabla de contenidos
 0. [Introducción al curso](#introduccion)
+   1. [Internacionalización](#intennacionalizacion)
+      1. [Opciones de lenguaje](#language)
 1. [Acceso a la línea de comandos](#consola)
    1. [Entorno gráfico](#graphic_console)
    2. [Terminales y consolas](#console)
@@ -30,11 +32,13 @@
    1. [Comandos](#proc_cmd)
    2. [Señales](#signals)
    3. [Monitorización de procesos](#proc_monitoring)
+8. [Control de servicios y demonios](#systemd)
+   1. [Comando _systemctl](#systemctl)
    
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
 
-#### Máquinas
+#### Máquinas clase
 
 * Máquina: **foundation12** (172.25.254.12 - 172.25.12.1), user: kiosk / lamia
 * Máquinas virtuales:
@@ -42,7 +46,7 @@
   * **server12** (172.15.12.11): student/student - root/redhat
 * Máquina del profe: **classroom** (172.25.0.254)
 
-#### Controlar las máquinas virtuales
+##### Controlar las máquinas virtuales
 
 Programa `rht-vmctrl`, opciones:
 * reset -- restaura la máquina hasta el último snapshot guardado
@@ -51,8 +55,27 @@ Programa `rht-vmctrl`, opciones:
 * save -- hace el snapshot
 * fullreset -- vuelve la VM al origen de los tiempos.
 
-#### Opciones de lenguaje
+#### Máquinas casa
 
+Hemos creado 3 máquinas Centos con vagrant en amadablam, con el usuario _student_ (Pass:student) y el _root_ (Pass:vagrant)
+* server: 10.0.100.101
+* desktop1: 10.0.100.102
+* desktop2: 10.0.100.103
+
+Tenemos un snapshot inicial de cada una de ellas en las que ya está creado el suario _student_
+
+## Internacionalización <a name="internacionalizacion"></a>
+
+Control de la configruación de gnome: `gnome-control-center`. Entre otras tiene las siguientes opciones.
+* _region_: Establece las opciones de región y lenguaje (incluidos formatos).
+* _datetime_: Establece opciones de fecha y hora.
+
+### Opciones de lenguaje <a name="language"></a>
+
+La configuración del lenguaje de cada usuario en gnome se guarda en: /var/lib/AccountService/users/${USER}
+Para establecer un lenguaje para un comando:
+* `$ LANG=<codigo> <comando>`, con de código es uno de los admitidos 
+* `localectl list-locales`, muestra todos los códigos
 * Si accedemos a la máquina por ssh: `loadkeys es` (se pierde cada vez que se reinicie la máquina).
 * Podemos tocar a mano el fichero `/etc/vconsoles.conf`
 * La manera más cómoda es cambiarlo en el entorno gráfico.
@@ -61,7 +84,9 @@ Programa `rht-vmctrl`, opciones:
 
 ## Entorno gráfico <a name="graphic_console"></a>
 
-El entorno gráfico por defecto en RHEL7 es Gnome3, que corre sobre XWConceptos<a name="file_conceptsindow. Tiene dos modos: _classic_ y _modern_.
+El entorno gráfico por defecto en RHEL7 es Gnome3, que corre sobre XW
+
+Tiene dos modos: _classic_ y _modern_.
 
 Cuando se entra por primera vez, se hace un setup inicial al ejecutarse `/usr/libexec/gnome-initial-setup`, (en cualquier momento podemos volver a lanzarlo para reconfigurar el entorno), después arranca el _Gnome Help_, al que siempre se puede ir pulsando **F1** o, desde un terminal ejecutando `yelp`, o desde el menú: **Application --> Documentation --> Help**.
 
@@ -86,7 +111,7 @@ En una jerarquí a LVM se encapsulan los directorios, como mínimo:
 * **Persistencia**: Se refiere a la resistencia a "sobrevivir" a los reinicios, los ficheros persistentes guardan cambios que se conservan entre reinicios. **IMPORTANTE: En el exámen todo tiene que quedar persistente, ya que hay varios reinicios.**
 * **Runtime**: Cambios que se conservan mientras está encendida la máquina.
 
-## Manejo de ficheros<a name="file_mngmt"></a>
+## Manejo de ficheros <a name="file_mngmt"></a>
 
 * `touch`: Crea un fichero, si no existe, y le cambia el _timestamp_ si existe.
 * `stat`: Da información relevante sobre el fichero
@@ -194,8 +219,8 @@ La configuración del usuario está en el fichero `/etc/passwd`, que contiene so
 4. GID, grupos del usuario, 1 principal y el resto secundarios.
    Cuando creamos el usuario se crea un grupo principal con el mismo nombre que el usuario
 5. GECOS: String que usamos para identificar el usuario.
-7. $HOME: directorio raíz del usuario
-8. shell del usuario (podemos tener o `/sbin/nologin` -para evitar que el usuario no haga login ,por ejemplo, si va a usar servicios del sistema pero no necesita acceso a la shell de sistema ni manipular ficheros del sistema; o `/bin/false`, si no queremso que use nada de nuestro sistema).
+6. $HOME: directorio raíz del usuario
+7. shell del usuario (podemos tener o `/sbin/nologin` -para evitar que el usuario no haga login ,por ejemplo, si va a usar servicios del sistema pero no necesita acceso a la shell de sistema ni manipular ficheros del sistema; o `/bin/false`, si no queremso que use nada de nuestro sistema).
 
 Configuración de grupos, `/etc/group`:
 1. nombre
@@ -520,7 +545,7 @@ S --> Estado del proceso
 Shift+p --> te lo ordena por consumo de procesador
 Shift+m --> te lo ordena por consumo de memoria
 
-# Control de servicios y demonios <a name="systemctl"></a>
+# Control de servicios y demonios <a name="systemd"></a>
 
 * **systemd** es el análogo al **init** de versiones anteriores.
    * controla los arranques de servicios y demonios del sistema.
@@ -557,6 +582,7 @@ Estados:
    * active (runing, exited, waiting, inactive)
 
 ### Usos
+
 * Comprobar si un servicio está activo: `systemctl is-active name.type`
 * Comprobar si está preparado para ejecutarse en el inicio: `systemctl is-enabled name.type`
 * Listar estado de los servicios `systemctl list-units --type=service` Nos muestra las activas, con _-all_ muestra todas, incluidas las inactivas.
@@ -570,12 +596,12 @@ Estados:
    * restart
    * reload (reinicio "gracefull")
    
- ### Dependencias de unidades
+ #### Dependencias de unidades
  
 `systemctl list-dependencies unit` Muestra las dependencias de la unidad, es decir, las unidades que la unidad en cuestión necesita para levantar.
 `systemctl list-dependencies unit --reverse` Lista las unidades que dependen de nuestra unidad.
 
-### Enmascaramiento.
+#### Enmascaramiento
 
 Para que ni el sistema ni un usuario levanten un servicio, se les enmascara, de forma que se borra el link simbólico que apunta al servicio, así nos aseguramos de que nadie accidentalmente nadie arranca el servicio.
 
