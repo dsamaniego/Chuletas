@@ -43,6 +43,9 @@
    5. [Archivos de configuracion](#net_config)
    6. [Configuración de Hostname y resolución de nombres](#naming)
 12. [Archivado y copia entre sistemas](#empaquetado)
+   1. [Empaquetado](#tar)
+   2. [Copia entre sistemas](#copy_b_sys)
+   3. [Sincronización segura entre sistemas](#rsync)
    
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
@@ -167,6 +170,7 @@ Dispositivos especiales del sistema:
 ### Redirecciones de salida <a name="output_redir"></a>
 
 Ojo, los operadores de fusión más modernos ( &>file &>>file) puede que no funcionen en shells antigüas.
+
 
 ### Entrada desde un fichero <a name="file_input"></a>
 
@@ -606,7 +610,7 @@ Qué necesitamos:
 * Una cuenta en el sistema remoto (IMPORTANTE: el usuario debe existir en el sistema remoto).
 * Una shell
 
-Podemos ver los usuarios que están conectados con `w -f`, que nos muestra los usuarios conectados, tanto en local, como remotos.
+Podemos ver los usuarios que están conectados con `w -f`, que nos muestra los usuarios conectados, tanto en local, como remojournalctltos.
 
 Comandos simples:
 * `ssh <remotehost>` - Sesión con el mismo usuario que el que tenemos en local.
@@ -651,9 +655,9 @@ Parámetros:
 
 Para que coja los cambios, `systemctl reload sshd`
 
-# Manejo de logs {#logs}
+# Manejo de logs <a name="logs"></a>
 
-## Monitorización del sistema {#logging}
+## Monitorización del sistema <a name="logging"><\a>
 
 Tenemos dos tipos de logs:
 * Los que hay en /var/log
@@ -685,7 +689,7 @@ En el fichero de configuración, los logs vienen configurados en la forma: _faci
 * Se pueden negar facilities con la severity _none_.
 * en el mail, fijarse que viene `mail.* -/var/log/mail.log` el guión idica que los logs se hacen de forma asíncrona.
 
-## Rotado de logs {#logrotate}
+## Rotado de logs<a name="logrotate"></a>
 
 Fichero de configuracion: `/etc/logrotate.conf` o en `/etc/logrotate.d/*`
 Cuando se hago un rotado, se guardará el antigüo con un timestamp.
@@ -706,7 +710,7 @@ Podemos usar un `tail -f <fichero_log>`
 
 Para comprobar configuraciones que hemos hecho en el syslog: `logger -p facility.severity "string"` nos mandará al fichero de log que esté configurado el mensaje.
 
-## journalctl <a name="journalctl"></a>
+## journalctl<a name="journalctl"></a>
 
 Hay una BB.DD. central de systemd que manda a journald. Los logs se almacenan en el `/run/log/journal` que es un fichero binario indexado. No se conservan entre reinicios (todo esto es el comportamiento por defecto y se puede cambiar).
 
@@ -734,7 +738,8 @@ Por defecto el journal, no puede tener mas del 10% del sistema de ficheros, y ti
 
 Para ver si está corriendo: `sysemctl status systemd-journald`
 
-****Procedimiento****  
+**Procedimiento**
+
 ~~~ bash
 # creamos el directorio
 mkdir /var/log/journal
@@ -878,7 +883,7 @@ Requiere puerto, ip y protocolo.
 Es el CLI para controlar el NetworkManager. 
 
 El NetworkManager no puede estar corriendo a la vez que network (así que hay que enmascarar el network). para ver si está corriendo: `systemctl status NetworkManager`
-https://mail.google.com/mail/u/0/#label/Comida%2FDieta/FMfcgxwBVzrDlCxmtbNNpzkgXKsFFFDq
+
 Tres seccines:
 * dev -- Dispositivos, 4 opciones:
    - show
@@ -968,3 +973,86 @@ Para probar como funciona el DNS:
 
 # Archivado y copia entre sistemas <a name="enpaquetado"></a>
 
+## Empaquetado <a name="tar"></a>
+TAR es una utilidad que permite empaquetar y/o comprimir una serie de ficheros en un solo fichreo.
+
+Se le pueden pasar los flags con o sin guión:
+* c --> crear
+* x --> extraer
+* t --> enumerar
+* v --> modo verboso
+* f --> donde está el fichero (el fichero tiene que ir detrás de la f).
+* p --> mantiene los permisos (de ejecución).
+
+La sentencia es: `tar <flags> archivo.tar <fich_1>...<fich_n>`
+El empaquetado no conserva la barra, así la descompresión es relativa al directorio donde esté trabajando.
+
+El empaquetado empaqueta los fichreros y directorios que el usuario pueda leer. Almacena usuario, grupo y permisos, pero solo cuando descomprimamos con root conservaremos eso, si no, cogerán los del usuario que descomprima.
+
+Si queremos conservar SELinux y ACLs, tendremos que usar el flag **--xattrs**
+
+### Empaquetado con compresion
+
+Tipos de compresión permitidos:
+* gzip (flag **z**) -- Más rápido y más antigüo
+* bzip2 (flag **j**) -- Mejor compresion
+* xz (flag **J**) -- Mejor compresión de todos
+
+Necesitamos tener instalado el paquete del compresor.
+Al descomprimir, el tar detecta que tipo de algoritmo de compresión se usó, por lo que no es necesaro pasarle el flag.
+
+## Copia entre sistemas <a name="copy_b_sys"></a>
+
+### scp
+
+Para copiar ente sistemas, se usa el comando **scp**, que se hace sobre ssh.
+
+Formato:
+* scp remoto local --> Para traernos la copia
+* scp local remoto --> Para llevarnos la copia
+
+Admite recursividad con el flag **-r**
+
+### sftp
+
+Es un ftp que va sobre ssh, como en el ftp sin cifrar, se nos abre una subshell para interactuar con el servidor remoto.
+
+~~~bash
+$ sftp servidor
+user@servidor password: xxxx
+Connected to servidor.
+sftp>
+sftp> cd dir
+sftp> get fichero (se trae el fichero)
+#####
+sftp> put fichero (se lleva el fichero)
+####
+~~~
+
+Admite los siguientes comandos: ? (ayuda), (l)cd, ls, mkdir, rmdir, (l)pwd, (m)get, (m)put, exit
+
+## Sincronización segura entre sistemas <a name="rsync"></a>
+
+**rsync** es una herramienta apara copiar de forma segura ficheros entre sistemas (se basa en ssh).
+
+Hace un movimiento incremental entre directorios (estén o no en el mismo sistema). Se usa para backpus y recuperación de desastres (tenemos que tener una copia offline sincronizada con el sistema que queramos recuperar).
+
+Hay que hacer una sincronización inicial (hará lo mismo que el scp), y a partir de ahí sólo llevará los cambios.
+
+* -n: hacer un _dryrun_, con lo que nos aseguramos que no vamos a hacer ninǵu destrozo.
+* -a: reune los flags:
+   * -r: recursivo
+   * -l: mantiene links simbólicos
+   * -p: mantiene permisos
+   * -t: mantiene timestamps
+   * -g: mantine las propiedades de grupo
+   * -o: mantiene propietario
+   * -D: sincroniza archivos de dispositivo
+* -H: se trae los hardLinks (así evitas tener que traerte dos veces los mismos datos).
+* -v: verboso
+* -A: mantiena ACLs
+* -x: mantiene SELinux
+
+Generalmente se copiará con -av, también se puede hacer entre dos directorios locales.
+
+**IMPORTANTE** si quiero copiar el contenido de un directorio: hay que poner la barra al final, si no ponemos la barra al final, te llevas también el directorio
