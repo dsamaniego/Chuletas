@@ -857,4 +857,79 @@ Requiere puerto, ip y protocolo.
    * -a -- muestra todos los sockets
    * -p -- proceso que usa el socket
  
+ ## NetworkManager <a name="nm"></a>
  
+ De cara al network manager, tenemos que distinguir:
+ * _device_name_ Cada una de las conexiones que puede establecer mi equipo.
+ * _conexion_ 
+ 
+ Ficheros de configuración:
+ * /etc/sysconfig/network-scripts/*
+   - ifcfg-<conexion> (uno por conexión)
+   
+### nmcli 
+
+Es el CLI para controlar el NetworkManager. 
+
+El NetworkManager no puede estar corriendo a la vez que network (así que hay que enmascarar el network). para ver si está corriendo: `systemctl status NetworkManager`
+
+Tres seccines:
+* dev -- Dispositivos, 4 opciones:
+   - show
+   - status
+   - connect
+   - disconnect
+* con -- Conexiones, hay que pasarle el nombre de la conexión _CON_ID_
+   - add
+      - Con ip estática, necesitamos
+         - Nombre de conexión
+         - tipo de conexión
+         - onboot (Sólo una a YES)
+         - ipv4
+         - network
+         - nombre del dispositivo
+         - GW
+      - Con DHCP
+         - Nombre de conexión
+         - tipo de conexión
+         - nombre del dispositivo
+   - up
+   - down
+   - show
+   - reload
+   - delete
+   - edit
+   - mod <CON_ID>, podemos modificar parámetros de la conexión.
+      - autoconnect(yes/no) - Es el ONBOOT del los ficheros de configuración, OJO, que solo puede haber uno en el arranque.
+      - Añadir/Cambiar DNS
+      - cambiar la IP
+      - Cambiar GW
+      - Ignore AutoDNS (yes/no) - el antigüo de los ficheros PEERDNS, Si está YES, ignora lso DNSs que le pasa el DHCP y se guarda los que tiene configurados en `/etc/resolv.conf`
+* net -- Networking
+   - on
+   - off
+   
+Cada configuración que veamos aquí tiene su reflejo en el fichero de configuración. (`/etc/sysconfig/network-scripts/ifcfg-<conex>`).
+
+Ayudas:
+* man nmcli
+* man nmcli-examples(5)
+* man nm-settings(5)
+
+## Archivos de configuracion
+
+/etc/sysconfig/network-scripts/ifcfg-<name>
+   |_|_|_|
+   |Estática|dinámica|cualquiera de las dos opciones|
+   |-|-|-|
+   |BOOTPROTO=none||DEVICE=eth0|
+   |IPADRR0=172.25.X.10| | NAME="System eth0"|
+   |GATEWAY0=172.25.X.254| BOOTPROTO=dhcp|ONBOOT=yes|
+   |DEFROUTE=yes  |  | UUID=fsfds232-2|
+   |DNS1=172.25.254.254||USERCTL=yes|
+   |-|-|-|
+   
+   
+
+
+
