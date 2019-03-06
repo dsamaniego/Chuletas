@@ -600,7 +600,7 @@ Esto lo podemos hacer para que no podamos levantar dos servicios que entran en c
 
 # Configurando y asegurando el servicio SSH <a name="openssh"></a>
 
-**OpenSSH - _Open Secure Shell_** - permite cifrar usando claves asimétricas entre dos máquinas.
+journalctl**OpenSSH - _Open Secure Shell_** - permite cifrar usando claves asimétricas entre dos máquinas.
 
 Qué necesitamos:
 * Una cuenta en el sistema remoto (IMPORTANTE: el usuario debe existir en el sistema remoto).
@@ -651,9 +651,9 @@ Parámetros:
 
 Para que coja los cambios, `systemctl reload sshd`
 
-# Manejo de logs <a name="logs"></a>
+# Manejo de logs {#logs}
 
-## Monitorización del sistema <a name="logging"></a>
+## Monitorización del sistema {#logging}
 
 Tenemos dos tipos de logs:
 * Los que hay en /var/log
@@ -685,7 +685,7 @@ En el fichero de configuración, los logs vienen configurados en la forma: _faci
 * Se pueden negar facilities con la severity _none_.
 * en el mail, fijarse que viene `mail.* -/var/log/mail.log` el guión idica que los logs se hacen de forma asíncrona.
 
-## Rotado de logs <a name="logrotate"></a>
+## Rotado de logs {#logrotate}
 
 Fichero de configuracion: `/etc/logrotate.conf` o en `/etc/logrotate.d/*`
 Cuando se hago un rotado, se guardará el antigüo con un timestamp.
