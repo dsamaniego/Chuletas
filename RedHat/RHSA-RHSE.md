@@ -1,51 +1,18 @@
 # Tabla de contenidos
 [Introducción al curso](#introduccion)
 1. [Acceso a la línea de comandos](#consola)
-   1. [Entorno gráfico](#graphic_console)
-   2. [Terminales y consolas](#console)
 2. [Manejo de archivos con la línea de comandos](#manage_files)
-   1. [Jerarquía de directorios](#file_hierachy)
-   2. [Conceptos](#file_concepts)
-   3. [Manejo de ficheros](#file_mngmt)
-   4. [File Globbing](file_globbing)
-   5. [Sustitución de comandos](#command_subs)
 3. [Obtener ayuda](#help)
-   1. [Comandos útiles](#hlp_cmd)
 4. [Ficheros de texto](#txt_files)
-   1. [Redirecciones](#redir)
-   2. [Tuberías](#pipes)
 5. [Usuarios y grupos](#user_group_mngmt)
-   1. [Administración de usuarios](#admin_users)
-   2. [Administración de grupos locales](#group_admin)
-   3. [Contraseñas](#passwd)
 6. [Permisos](#perms)
-   1. [Cambiar permisos](#chmod)
-   2. [Cambiar propietarios](#chown)
-   3. [Permisos especiales](#setuid)
 7. [Monitorización y administración de procesos](#proc)
-   1. [Comandos](#proc_cmd)
-   2. [Señales](#signals)
-   3. [Monitorización de procesos](#proc_monitoring)
 8. [Control de servicios y demonios](#systemctl)
-   1. [Comando _systemctl_](#systemctl)
 9. [Configurando y asegurando el servicio SSH](#openssh)
-   1. [Conexión](#conex_ssh)
-   2. [Configuración del servicio](#config_ssh)
 10. [Manejo de logs](#logs)
-   1. [Monitorización del sistema](#logging)
-   2. [Rotado de logs](#logrotate)
-   3. [NTP, configuración del tiempo](#ntp)
 11. [Networking](#network)
-   1. [Conceptos](#net_concepts)
-   2. [Consultas de redes](#network_query)
-   3. [NetworkManager](#nm)
-   4. [nmcli](#nmcli)
-   5. [Archivos de configuracion](#net_config)
-   6. [Configuración de Hostname y resolución de nombres](#naming)
 12. [Archivado y copia entre sistemas](#empaquetado)
-   1. [Empaquetado](#tar)
-   2. [Copia entre sistemas](#copy_b_sys)
-   3. [Sincronización segura entre sistemas](#rsync)
+13. [Manejo de paquetes de software](#packages)
    
 # Introducción al curso <a name="introduccion"></a>
 [kiosk@foundation12 ~]$ find /etc -name passwd 2> /dev/null |tee /dev/pts/1 > ~/encontrados4.txt
@@ -76,12 +43,13 @@ Hemos creado 3 máquinas Centos con vagrant en amadablam, con el usuario _studen
 
 Tenemos un snapshot inicial de cada una de ellas en las que ya está creado el suario _student_
 
-## Internacionalización <a name="internacionalizacion"></a>
+## Internacionalización
 
 Control de la configruación de gnome: `gnome-control-center`. Entre otras tiene las siguientes opciones.
 * _region_: Establece las opciones de región y lenguaje (incluidos formatos).
 * _datetime_: Establece opciones de fecha y hora.
-### Opciones de lenguaje <a name="language"></a>
+
+### Opciones de lenguaje
 
 La configuración del lenguaje de cada usuario en gnome se guarda en: /var/lib/AccountService/users/${USER}
 Para establecer un lenguaje para un comando:
@@ -91,9 +59,11 @@ Para establecer un lenguaje para un comando:
 * Podemos tocar a mano el fichero `/etc/vconsoles.conf`
 * La manera más cómoda es cambiarlo en el entorno gráfico.
 
+***
+
 # Acceso a la línea de comandos <a name="consola"></a>
 
-## Entorno gráfico <a name="graphic_console"></a>
+## Entorno gráfico
 
 El entorno gráfico por defecto en RHEL7 es Gnome3, que corre sobre XWConceptos<a name="file_conceptsindow. Tiene dos modos: _classic_ y _modern_.
 
@@ -101,13 +71,13 @@ Cuando se entra por primera vez, se hace un setup inicial al ejecutarse `/usr/li
 
 Incluso en el entorno gráfico tenemos consolas, para acceder a ellas hay que pulsar las combinaciones de teclas **Ctrl+Alt+[F2-F6]**, para volver al entorno gráfico: **Ctrl+Alt+F1**.
 
-## Terminales y consolas <a name=console></a>
+## Terminales y consolas
 
 Aquí hay que poner los atajos de teclado etc...
 
 # Manejo de archivos con la línea de comandos <a name="manage_files"></a>
 
-## Jerarquía de directorios <a name="file_hierachy"></a>
+## Jerarquía de directorios
 
 Los directorios en RHEL (como en todos los sabores Linux) se organizan en forma de árbol invertido en el que arriba está el directorio root (**/**).
 
@@ -115,27 +85,27 @@ En una jerarquí a LVM se encapsulan los directorios, como mínimo:
 * raíz (**/**)
 * arranque (**/boot**), será una partición separada con las imágenes estáticas de arranque.
 
-## Conceptos <a name="file_concepts"></a>
+## Conceptos
 
 * **Persistencia**: Se refiere a la resistencia a "sobrevivir" a los reinicios, los ficheros persistentes guardan cambios que se conservan entre reinicios. **IMPORTANTE: En el exámen todo tiene que quedar persistente, ya que hay varios reinicios.**
 * **Runtime**: Cambios que se conservan mientras está encendida la máquina.
 
-## Manejo de ficheros<a name="file_mngmt"></a>
+## Manejo de ficheros
 
 * `touch`: Crea un fichero, si no existe, y le cambia el _timestamp_ si existe.
 * `stat`: Da información relevante sobre el fichero
 
-## File Globbing<a name="file_globbing"></a>
+## File Globbing
 
 Para negar expresiones complejas de _file globbing_, meter un signo de exclamación entre los corchetes de apertura, por ejemplo: Ningun caracter alfabético: **[![:alpha:]]**
 
-## Sustitución de comandos <a name="hlp_command"></a>
+## Sustitución de comandos
 
 Tenemos dos formas de invocar un comando en línea de comandos:
 - `$(comando)`
 - \``comando`\`
 
-Las dos son equivalentes, pero la primer opción permite anidamiento, por ejemplo:
+Las dos son equivalentes, pero la primera opción permite anidamiento, por ejemplo:
 
 ~~~bash
 VARIABLE=$(echo $PATH)
@@ -144,6 +114,8 @@ VARIABLE=$(echo $PATH)
 ### Protección de argumentos
 
 Si en una cadena tenemos que pasar una expresión, hay que usar comillas dobles, ya que las comillas simples hacen que todo lo que va dentro de unas comillas simples se considera un literal, mientras que las dobles comillas **"** permten sustitución de comandos y variables, pero suprimen en _file globbing_.
+
+***
 
 # Obtener ayuda <a name="help"></a>
 
@@ -155,13 +127,15 @@ El comando `man` está organizado en diferentes secciones de la 1 a la 8, las qu
 
 `mandb` Es un comando para actualizar la base de datos de ayuda, es útil correrlo cuando se instala algún nuevo paquete.
 
-## Comandos útiles <a name="hlp_cmd"></a>
+## Comandos útiles
 
 - `man -k <palabla>` Muestra todas las entradas de **man** en las que aparece esa palabra en el sumario. Es equivalente al comando `apropos <palabra>`.
 - `man -K <palabra>` Como la anterior pero la búsqueda se extiende a todo el  artículo no solo al sumario.
 - `man -t <termino_de_ayuda>` Prepara la página de man para imprimir en formato PostScript.
 - `info` y `pinfo` Como **man** pero estructurado en nodos e hipervínculos, casi toda la ayuda del proyecto GNU está en este formato.
 - `/usr/share/doc` Documentación de paquetes, hay algunos que se tienen que instalar explicitamente con un `yum install -y <paquete>-doc-xxx`, para verlo lo más sencillo es usar un navegador (por ejemplo: `firefox file:///usr/share/doc/yum`).
+
+***
 
 # Ficheros de texto <a name="txt_files"></a>
 
@@ -173,24 +147,22 @@ Un proceso en ejecución tiene 4 flujos:
 * salida de error (stdout) (canal 2)
 * salida a otros ficheros (canales, 3, 4, ...)
 
-## Redirecciones <a name="redir"></a>
+## Redirecciones
 
 Operadores de redirección:
 * **>** Escribe en un fichero, si existe, lo sobreescribe y si no existe lo crea
 * **>>** Append, si existe, añade al fichero y si no lo crea.
 * **<** 
 
-
 Dispositivos especiales del sistema:
 * `/dev/null`--> es un sumidero, todo lo que dirijamos a él se pierde.
 * `/dev/zero`--> Si queremos meter ceros como entrada.
 
-### Redirecciones de salida <a name="output_redir"></a>
+### Redirecciones de salida
 
 Ojo, los operadores de fusión más modernos ( &>file &>>file) puede que no funcionen en shells antigüas.
 
-
-### Entrada desde un fichero <a name="file_input"></a>
+### Entrada desde un fichero
 
 Podemos redirigir la salida como entrada a otro programa (por ejemplo en un bucle for):
 ~~~ bash
@@ -200,19 +172,21 @@ do
 done < "${1:-/dev/stdin}
 ~~~
 
-## Tuberías <a name="pipes"></a>
+## Tuberías
 
 Otra forma de hacer que la salida de un fichero sea la entrada de otro comando es con un pipe **|**.
 
 Para encadenar comandos, ya sabemos que hay que separar comandos por un **;**, para encadenar salidas de un proceso como entrada del siguiente, se usan las tuberías (enlazas las stdout).
 
-### tee <a name="tee"></a>
+### Comando _tee_
 
 Comando **tee** copia su stdin a stdout y al fichero que le digamos.
 
 Ejemplos:
 * `ls -l | tee /tmp/saved-output | less` --> la salida de tee va a pantalla y a un fichero
 * `ls -l | tee /dev/pts/0| mail student@desktop1.example.com` --> El tee envía su salida al terminal y, a la vez al programa de correo electrónico (para ver el teminal, podemos usar el comando `tty` para ver el dispositivo de salida).
+
+***
 
 # Usuarios y grupos <a name="user_group_mngmt"></a>
 
@@ -246,7 +220,7 @@ Cuando creamos un fichero se le asigma un usuario y grupo acorde con los del usu
 
 Si se quieren añadir nuevas capacidades a un usuario, mejor añadir grupos suplementarios -mejor no cambiar el grupo principal.
 
-## Conseguir acceso de superusuario <a name="root_access"></a>
+## Conseguir acceso de superusuario
 
 El señor **root**, tiene todos los poderes sobre el sistema, sólo el puede administrar los dispositivos físicos del sistema.
 
@@ -285,7 +259,7 @@ Dado que tiene todos los privilegios, tiene una capacidad ilimitada de romper el
    
 Esto, no impide que cuando vayamos a trabajar con entornos gráficos, lo que nos restringe los permisos es el _Policy Kit_ de GNOME.
 
-## Administración de usuarios <a name="admin_users"></a>
+## Administración de usuarios
 
 Crear usuarios **useradd \<usuario>**, nos añadirá una línea en `/etc/passwd`
 Una vez añadido el usuario, tendremos que configurarlo, ya que nos lo crea sin contraseña.
@@ -304,7 +278,8 @@ Borrar usuarios con **userdel** (con la opción -r borra el $HOME del usuario), 
 
 Para prevenir esto, como root, ejecutar: `find / -nouser -o -nogroup 2>/dev/null`
 
-### Rangos de UIDs <a name="UID_range"></a>
+### Rangos de UIDs
+
 * 0 --> root
 * 1 - 200 --> de sistema usados por procesos
 * 201-999 --> de sistema usados por procesos, sin acceso al sistema de ficheros
@@ -372,6 +347,8 @@ Podemos impedir que un usuario no acceda a la shell cambiando su shell a `/sbin/
 usermod -s /sbin/nologin <username>
 ~~~
 
+***
+
 # Permisos <a name="perms"></a>
 
 Si hacemos un ls -l, vemos las sigueintes características:
@@ -396,7 +373,7 @@ OJO al crear estructuras de directorios, a ver si podemos atravesarlos. y no se 
 
 Si quiero ver los permisos de un directorio: `ls -ld <directorio>`
 
-## Cambiar permisos <a name="chmod"></a>
+## Cambiar permisos
 
 Se trabaja por grupos: - rwx rwx rwx   student  student  <fichero>, el propietario puede cambiar los permisos de todo.
 
@@ -407,13 +384,13 @@ Se trabaja por grupos: - rwx rwx rwx   student  student  <fichero>, el propietar
       * la X se suele aplicar en directorios, se tiene que aplicar siempre con la opción **-R** de **chmod**.
 **Notación octal:** `chmod sUGO <fichero>`
 
-## Cambiar propietarios <a name="chown"></a>
+## Cambiar propietarios
 
 Permite cambiar el propietario y el grupo, `chwon owner:group <file/dir>`, admite recursivo (**-R**).
 
 Podemos cambiar el propietario (`chmod <user> <file/dir>`), el grupo (`chmod :<group> <file/dir>`) o los dos. El propietario sólo lo puede cambiar root, el grupo lo puede cambiar el usuario. Otra forma de cambiar el grupo es con `chgrp <group> <file/dir>`.
 
-## Permisos especiales <a name="setuid"></a>
+## Permisos especiales
 
 Se puede meter otro octeto de permisos, en la x, si la hay, s, si no la hay una S y en others... t si la hay y T si no la hay. Es decir, se enmascara la x (permiso de ejecución).
 * Usuario y grupo: rwx --> rws, rw- --> rwS: Algo hay activo, si salen los standar, está inactivo.
@@ -440,14 +417,16 @@ Para asignar esto permisos se hace con chmod:
  localectl status
  En la notación octal, se añade otro dígito a la notación octal antes de los otros 3 dígitos.
  
-## Máscaras <a name="umask"></a>
+## Máscaras
 
 Cuando creamos un fichero, por defecto se nos crea con un grupo de permisos por defecto, que vienen definidos por una máscara.
 Es una máscara en negativo, ed. 0027 --> Si pongo un 0, si se le da un 7, con la excepción de que no se le da ejecución si son ficheros.
-* Genérico del sistema: /etc/profile ó /etc/bashrc  
-* Para un usuario concreto: ~/.bash_profile ó ~/.bashrc  
+* Genérico del sistema: `/etc/profile` ó `/etc/bashrc`  
+* Para un usuario concreto: `~/.bash_profile` ó `~/.bashrc`  
 
 Por seguridad no se dan permisos de ejecución por defecto a ningún fichero, hay que darle explícitamente el fichero de ejecución.
+
+***
 
 # Monitorización y administración de procesos <a name="proc"></a>
 
@@ -462,7 +441,7 @@ El entorno de un proceso incluye:
 * Constexto actual almacenado.
 * Recursos reservados.
 
-## Comandos <a name="proc_cmd"></a>
+## Comandos
 
 **ps**: 3 formatos de variables y un montón de flags.
    * - UNIX POXIX `ps -aux`
@@ -501,7 +480,7 @@ Si nos salimos de la shell, mataremos todos los jobs que estén en la shell, par
 
 **TRUCO:** A veces en vez de hacer un bucle `while true; do clear; <comando>; sleep 2; done` será mejor ejecutar `watch -n 2 <comando>`
 
-## Señales <a name="signals"></a>
+## Señales
 
 Son interrupciones de SW enviadas al proceso.
 Principales señales (OJO, los números de las señales, varian según la plataforma, por lo que se suele usar el nombre de la señal).
@@ -532,7 +511,7 @@ Si queremos ver los usuarios de un terminal:
 * `pstree [PID|user]` - muestra el arbol de procesos del usuario o del proceso
 * `pgrep ` para mostar procesos con búsquedas más avanzadas.
 
-## Monitorización de procesos <a name="proc_monitoring"></a>
+## Monitorización de procesos
 
 Comando `top` 
 Comando `uptime` -- Número de procesos, tiempo levantado y carga
@@ -557,6 +536,8 @@ S --> Estado del proceso
 Shift+p --> te lo ordena por consumo de procesador
 Shift+m --> te lo ordena por consumo de memoria
 
+***
+
 # Control de servicios y demonios <a name="systemctl"></a>
 
 * **systemd** es el análogo al **init** de versiones anteriores.
@@ -574,9 +555,9 @@ Que nos proporcina systemd:
 * Inicio bajo demanda de los servicios.
 * Puede agrupar daemos relacionados.
 
-## Comando _systemctl_ <a name="systemctl"></a>
+## Comando _systemctl_
 
-* Ayuda: `systemctl -t hel`
+* Ayuda: `systemctl -t help`
 * consulta de estado: `systemctl [-l] <daemon>`
 
 Systemctl administra Unidades, 3 tipos:
@@ -620,6 +601,8 @@ Esto lo podemos hacer para que no podamos levantar dos servicios que entran en c
 
 `systemctl [mask|umask] <unit>` Una vez hecho esto, no podrá arrancar bajo ningún concepto.
 
+***
+
 # Configurando y asegurando el servicio SSH <a name="openssh"></a>
 
 journalctl**OpenSSH - _Open Secure Shell_** - permite cifrar usando claves asimétricas entre dos máquinas.
@@ -635,7 +618,7 @@ Comandos simples:
 * `ssh <remoteuser>@<remotehost>` - Abre una sesión con un usuario distinto del que tenemos en local.
 * `ssh <user>@<host> <comando>` - Ejecuta este comando en la máquina remota.
 
-## Conexión <a name="conex_ssh"></a>
+## Conexión
 
 Cuando se inicia la conexión, se hace un intercambio de claves públicas.
    * Se guardan en una serie de ficheros dentro del directorio oculto en **~/.ssh**
@@ -662,7 +645,7 @@ Importante, los permisos de los ficheros:
 * claves privadas: 600
 * autorized_keys: 600
 
-## Configuración del servicio <a name="config_ssh"></a>
+## Configuración del servicio
 
 Fichero de configuracion: **/etc/ssh/sshd_config**. No suele ser habitual a root por ssh, es más lógico conectarse con un usuario que tenga capacidad de sudo.
 
@@ -673,9 +656,11 @@ Parámetros:
 
 Para que coja los cambios, `systemctl reload sshd`
 
+***
+
 # Manejo de logs <a name="logs"></a>
 
-## Monitorización del sistema <a name="logging"><\a>
+## Monitorización del sistema
 
 Tenemos dos tipos de logs:
 * Los que hay en /var/log
@@ -707,7 +692,7 @@ En el fichero de configuración, los logs vienen configurados en la forma: _faci
 * Se pueden negar facilities con la severity _none_.
 * en el mail, fijarse que viene `mail.* -/var/log/mail.log` el guión idica que los logs se hacen de forma asíncrona.
 
-## Rotado de logs<a name="logrotate"></a>
+## Rotado de logs
 
 Fichero de configuracion: `/etc/logrotate.conf` o en `/etc/logrotate.d/*`
 Cuando se hago un rotado, se guardará el antigüo con un timestamp.
@@ -728,7 +713,7 @@ Podemos usar un `tail -f <fichero_log>`
 
 Para comprobar configuraciones que hemos hecho en el syslog: `logger -p facility.severity "string"` nos mandará al fichero de log que esté configurado el mensaje.
 
-## journalctl<a name="journalctl"></a>
+## journalctl
 
 Hay una BB.DD. central de systemd que manda a journald. Los logs se almacenan en el `/run/log/journal` que es un fichero binario indexado. No se conservan entre reinicios (todo esto es el comportamiento por defecto y se puede cambiar).
 
@@ -771,7 +756,7 @@ killall -USR2 systemd-journald
 
 Ahora, como tenemos varios rebotes, podemos ver lo que hay desde el rebote _n_ con `journalctl -b -n` 
 
-## NTP. Configuración del tiempo <a name="ntp"></a>
+## NTP. Configuración del tiempo
 
 _Network Time Protocol_ Nos sirve para mantener nuestro servidor en la hora correcta.
 
@@ -804,9 +789,11 @@ Todo se configura con `/etc/chrony.conf`
 * El puerto TPC/UDP es el puerto 123 (ojo si queremos sincronizar con un servidor NTP externo a nuestra red, abrir puerto firewall).
 * para sincronizar, hay que reiniciar `systemctl restart chronyd`
 
+***
+
 # Networking <a name="network"></a>
 
-## Conceptos <a name="net_concept"></a>
+## Conceptos
 
 ### IPv4 - modelo de 4 capas
 
@@ -857,7 +844,7 @@ P.ej: enp0s3
 
 Si se han definido reglas para _udev_ personalizadas o si tenemos definido _biosdevname_ se cambia el nombre de asignación (pXpY).
  
-## Consultas de redes <a name="network_query"></a>
+## Consultas de redes
  
 `/sbin/ip` --> `ip addr [interfaz]` ~ `ip a [interfaz]`
  
@@ -884,7 +871,7 @@ Requiere puerto, ip y protocolo.
    * -a -- muestra todos los sockets
    * -p -- proceso que usa el socket
  
- ## NetworkManager <a name="nm"></a>
+ ## NetworkManager
  
  **IMPORTANTE** NetworkManager es incompatible con network, con lo que en un sistema no pueden estar los dos servicios activos.
  
@@ -896,7 +883,7 @@ Requiere puerto, ip y protocolo.
  * /etc/sysconfig/network-scripts/*
    - ifcfg-<conexion> (uno por conexión)
    
-## nmcli <a name="nmcli"></a>
+## nmcli
 
 Es el CLI para controlar el NetworkManager. 
 
@@ -946,7 +933,7 @@ Ayudas:
 * man nmcli-examples(5)
 * man nm-settings(5)
 
-## Archivos de configuracion <a name="net_config"></a>
+## Archivos de configuracion
 
 `/etc/sysconfig/network-scripts/ifcfg-<name>`
  
@@ -963,7 +950,7 @@ Cuando cammbienos los ficheros de configuración:
 2. `nmcli con down <con_id>`
 3. `nmcli con up <con_id>`
 
-## Configuración de Hostname y resolución de nombres <a name="naming"></a>
+## Configuración de Hostname y resolución de nombres
 
 El nombre de la máquina, por defecto, viene en `/etc/hostname` (antes estaba en `/etc/sysconfig/netowrk`), se obtiene con el comando **hostname**.
 
@@ -989,9 +976,12 @@ Para probar como funciona el DNS:
    * **nslookup** (este hay que instalarlo como paquete)
    * **host** ó **dig**
 
+***
+
 # Archivado y copia entre sistemas <a name="enpaquetado"></a>
 
-## Empaquetado <a name="tar"></a>
+## Empaquetado
+
 TAR es una utilidad que permite empaquetar y/o comprimir una serie de ficheros en un solo fichreo.
 
 Se le pueden pasar los flags con o sin guión:
@@ -1019,7 +1009,7 @@ Tipos de compresión permitidos:
 Necesitamos tener instalado el paquete del compresor.
 Al descomprimir, el tar detecta que tipo de algoritmo de compresión se usó, por lo que no es necesaro pasarle el flag.
 
-## Copia entre sistemas <a name="copy_b_sys"></a>
+## Copia entre sistemas
 
 ### scp
 
@@ -1049,7 +1039,7 @@ sftp> put fichero (se lleva el fichero)
 
 Admite los siguientes comandos: ? (ayuda), (l)cd, ls, mkdir, rmdir, (l)pwd, (m)get, (m)put, exit
 
-## Sincronización segura entre sistemas <a name="rsync"></a>
+## Sincronización segura entre sistemas
 
 **rsync** es una herramienta apara copiar de forma segura ficheros entre sistemas (se basa en ssh).
 
@@ -1073,8 +1063,137 @@ Hay que hacer una sincronización inicial (hará lo mismo que el scp), y a parti
 
 Generalmente se copiará con -av, también se puede hacer entre dos directorios locales.
 
-<<<<<<< HEAD
 **IMPORTANTE** si quiero copiar el contenido de un directorio: hay que poner la barra al final, si no ponemos la barra al final, te llevas también el directorio
-=======
-**IMPORTANTE** si quiero copiar el contenido de un directorio: hay que poner la barra al final, si no ponemos la barra al final, te llevas también el directorio
->>>>>>> master
+
+***
+
+# Manejo de paquetes de software <a name="packages"></a>
+
+Para instalar software en redhat, hay que usar la utilidad **yum**, para lo que la máquina tiene que estar licenciada, y con el _RedHat Subscription Manager_ veremos lo que podemos o no instalar.
+
+Para ejecutarlo:
+- Subscrition-manager-gui
+- Applications --> System Tools --> Subscrition Manager
+
+Necesitamos:
+* Tener el sistema registrado `subscrition-manager register --username="username" --password="pass"`
+* Tener el sistema subscritro
+   * Visualizar Subscripciones disponibles: `subscrition-manager list --availabe| less`
+   * Adjuntar una subscripción de forma automática: `subscription-manager attach --auto`
+   * Visualizar susbscripciones consumidas: `subscription-manager list --consumed`
+   * Eliminar la subscripción: `subscrition-manager unregister` 
+* Habilitar los repositorios (al dar de alta las subscripciones, nos debería dar de alta las que tenemos permitidos)
+* Revisar licenciamiento (Customer portal).
+
+Para todo esto, hay que tener salida a internet.
+
+## Certificados 
+
+/etc/pki/product --> Certificados de los productos instalados
+/etc/pki/consumer --> Certificados de la cuenta asociada
+/etc/pki/entitlement --> Certificados que contienen las subscripciones adjuntas al sistema
+
+## Paquetes RPM
+
+Es la forma de agrupar todos los fichreros que forman parte de un software.
+
+**IMPORTANTE** RPM se refiere a términos locales, YUM repositorios dinámicos, puede salir fuera. Los repositorios son conjuntos de paquetes.
+
+YUM resuelve dependencias (cosa qeu rpm no).
+
+### Nomenclatura:
+nombre-versión-release.arquitectura.rpm
+- si no hay arquitectura: noarch, si no (x86_64, x86_32, i386, ...)
+- para instalar sólo necesitamos el nombre.
+- no es obligatorio instalar.
+
+### Composición
+
+Cada rpm tiene metadatos que podemos consultra:
+* nombre
+* versión
+* release
+* arquitectura
+* resumen del paquete
+* descripción
+* dependencias (paquetes necesarios para que se instale el nuestro).
+* licencia (si se da el caso)
+* changelog
+* otros detalles
+   * Entre estos metadatos puedes tener scripts, que se pueden ejecutar en la instalación o en la desinstalación
+   * Firma GPG, (la clave pública estará disponible para comprobar la firma). - todos los paquetes lanzados por RH van firmados.
+   
+Cuando vamos a actualizar, no se meten parches, se instalan versiones. Sólo se puede instalar un paquete por sistema (generalmente), uno de los paquetes que podemos tener versionados es el kernel.
+
+Cuando desinstalamos un paquete, también desinstala los paquetes dependientes de él, ya que no van a funcionar.
+
+## Repositorios
+
+Configuración por defeco de yum: `/etc/yum.conf`
+Repositorios en: `/etc/yum.repos.d/*.repo`
+
+Para definir un repositorio necesitamos un fichero **\*.repo**
+Contenido mínimo:
+~~~text
+[IDENTIFICACION]
+name="nombre"
+baseurl={ftp,http,file}
+enabled={0|1}           # opcional (recomendable)
+gpgcheck={0|1}          # opcional (recomendable)
+gpgkey=url_public_key   # opcional (recomendable)
+~~~
+
+En el repositorio tendríamos que  tener los paquetes rpm y un repodata con los metadatos del repositorio.
+
+## YUM
+
+* Para mirar los repositorios: `yum repolist`
+* Listar las utilidades  `yum list yum*`
+* lista grupos de paquetes `yum grouplist`
+
+Si subscribimos un sistema, se configura automáticamente el acceso a los repositorios que tengamos adjuntos.
+
+Comandos informativos:
+* yum help
+* yum ist 'http*' - saca todo lo relacionado con http
+* yum search <palabra> - busca en los campos nombre y resumen
+* yum search all <keyword> - busca en nombre, resumen y descripción
+* yum info nombre_paquete - Saca información del paquete
+* yum provides <fichero> - Me dice que paquete instala este fichero
+
+Comandos que hacen pupa:
+* yum install <nombre_paquete> - Instala el paquete y sus dependencias.
+* yum update <nombre_paquete> - Actualiza el paqeute y sus dependencias, si no ponemos el nombre del paquete, actualiza todos. Hace copias de seguridad de los ficheros de configuración incompatibles y crea otro limpio.
+   - Si es un kernel, este es tipo _always install_, siempre se instala, aunque se indique con update.
+* yum remove <nombre_paquete> - Borra el paquete
+   - Si hay paquetes que dependen de él, también me los quita (porque ya no van a funcionar).
+   - Esto es una pega, porque si desinstalamos por error y lo volvemos a instalar, no arreglamos las dependencias rotas.
+
+ ### Grupos
+ 
+ Dos tipos:
+ - regular: un grupo de RPMs
+ - Entorno: un grupo de grupos regulares.
+ 
+ 3 tipos de paquetes de grupos:
+ - obligatorios
+ - predeterminados
+ - opcionales
+ 
+ * yum group list <nombre> (en versiones anteriores: yum grouplist).
+ * yum group info <nombre> (en versiones anteriores: yum groupinfo)
+      OJO: Si le tiramos este comando, nos va a mostrar los paquetes que forman parte del grupo:
+         = el paquete esá instalado o fué instalado como parte del grupo.
+         + No está instalado y para instalarlo hay que instalar el grupo.
+         - No está instalado y no se instalará (habría que instalarlo manualmente).
+         (sin marcador) El paquete está instalado individualmente
+            -> en este caso, podemos decirle al sistema que nos marque al grupo que sólo instale lso paquetes predeterminados u obligatorios que existan.
+* yum group install <grupo>
+* yum group mark install <group> --> marca que el grupo está instalado, y todos los paquetes que nos faltan por instalar de obligatorios y predeterminados, se nos instalaran (en la versión esto no era así, si teníamos la paquetería instalada, el grupo se consideraba que estaba instalado).
+   
+   
+Todo lo referente a lo que ha hecho yum está en `/var/log/yum.log`
+Además, tenemos un historial de lo que se ha hecho. `yum history`, que podemos consultar la paquetería que hemos isntalado.
+
+Podemos deshacer operaciones hechas desde el _yum history_
+ 
