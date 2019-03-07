@@ -189,7 +189,7 @@ Ejemplos:
 ***
 
 # Usuarios y grupos <a name="user_group_mngmt"></a>
-
+ https://github.com/JHicarArmendariz/Chuletas
 Cada proceso y fichero tiene un usuario propietario.
 
 Para ver la cuenta de usuario: comando **id**
@@ -445,7 +445,7 @@ El entorno de un proceso incluye:
 
 **ps**: 3 formatos de variables y un montón de flags.
    * - UNIX POXIX `ps -aux`
-   * -- Extendidas de GNU `ps --aux`
+   * -- Extendidas de GNU `ps --aux` https://github.com/JHicarArmendariz/Chuletas
    * (sin guion) BSD `ps aux`
    
 Cada uno hace una cosa distinta.
@@ -1206,7 +1206,7 @@ Podemos configurar repositorios de terceros editando un fichero *.repo en `/etc/
    * `yum-config-manager --add-rep=<url>`, genera un fichero de repositorio basándose en la URL que le hemos pasado, una vez que tenemos el fichero, podemos manipularlo.
 * `rpm --import <url_clave>`
 * `yum --enablerepo=<patrón_repo>` y `yum --disablerepo=<patrón_repo>`, se pueden usar combinados para determinar el paquete exacto que queramos, de forma temporal para esa ejecución.
-https://github.com/JHicarArmendariz/Chuletas
+
 ## RPM
 
 Esto no nos resuelve dependencias así que ojito, mejor usar yum.
