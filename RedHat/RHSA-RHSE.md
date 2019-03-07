@@ -1154,12 +1154,12 @@ En el repositorio tendríamos que  tener los paquetes rpm y un repodata con los 
 Si subscribimos un sistema, se configura automáticamente el acceso a los repositorios que tengamos adjuntos.
 
 Comandos informativos:
-* yum help
-* yum list 'http*' - saca todo lo relacionado con http
-* yum search <palabra> - busca en los campos nombre y resumen
-* yum search all <keyword> - busca en nombre, resumen y descripción
-* yum info nombre_paquete - Saca información del paquete
-* yum provides <fichero> - Me dice que paquete instala este fichero
+* `yum help`
+* `yum list 'http*'` - saca todo lo relacionado con http
+* `yum search <palabra>` - busca en los campos nombre y resumen
+* `yum search all <keyword>` - busca en nombre, resumen y descripción
+* `yum info nombre_paquete` - Saca información del paquete
+* `yum provides <fichero>` - Me dice que paquete instala este fichero
 
 Comandos que hacen pupa:
 * yum install <nombre_paquete> - Instala el paquete y sus dependencias.
@@ -1180,16 +1180,16 @@ Comandos que hacen pupa:
  - predeterminados
  - opcionales
  
- * yum group list <nombre> (en versiones anteriores: yum grouplist).
- * yum group info <nombre> (en versiones anteriores: yum groupinfo)
+ * `yum group list <nombre>` (en versiones anteriores: yum grouplist).
+ * `yum group info <nombre>` (en versiones anteriores: yum groupinfo)
       OJO: Si le tiramos este comando, nos va a mostrar los paquetes que forman parte del grupo:
-         = el paquete esá instalado o fué instalado como parte del grupo.
-         + No está instalado y para instalarlo hay que instalar el grupo.
-         - No está instalado y no se instalará (habría que instalarlo manualmente).
+         **=** el paquete esá instalado o fué instalado como parte del grupo.
+         **+** No está instalado y para instalarlo hay que instalar el grupo.
+         **-** No está instalado y no se instalará (habría que instalarlo manualmente).
          (sin marcador) El paquete está instalado individualmente
-            -> en este caso, podemos decirle al sistema que nos marque al grupo que sólo instale lso paquetes predeterminados u obligatorios que existan.
-* yum group install <grupo>
-* yum group mark install <group> --> marca que el grupo está instalado, y todos los paquetes que nos faltan por instalar de obligatorios y predeterminados, se nos instalaran (en la versión esto no era así, si teníamos la paquetería instalada, el grupo se consideraba que estaba instalado).
+            - en este caso, podemos decirle al sistema que nos marque al grupo que sólo instale lso paquetes predeterminados u obligatorios que existan.
+* `yum group install <grupo>`
+* `yum group mark install <group>` --> marca que el grupo está instalado, y todos los paquetes que nos faltan por instalar de obligatorios y predeterminados, se nos instalaran (en la versión esto no era así, si teníamos la paquetería instalada, el grupo se consideraba que estaba instalado).
    
    
 Todo lo referente a lo que ha hecho yum está en `/var/log/yum.log`
@@ -1201,12 +1201,22 @@ Podemos deshacer operaciones hechas desde el _yum history_
 
 yum repo list all --> devuelve lalista de todos los repositorios
 yum-config-manager --> utilidad para manipular los repositorios que tenemos.
-   * yum-config-manager --{enable|disable} <repositorio> --> nos habilita este respositorio (en el fich de config, mete un _enabled=1_)
+   * `yum-config-manager --{enable|disable} <repositorio>` --> nos habilita este respositorio (en el fich de config, mete un _enabled=1_)
 Podemos configurar repositorios de terceros editando un fichero *.repo en `/etc/yum.repos.d/*.repo`
-   * yum-config-manager --add-rep=<url>, genera un fichero de repositorio basándose en la URL que le hemos pasado, una vez que tenemos el fichero, podemos manipularlo.
-* rpm --import <url_clave>
-* yum --enablerepo=<patrón_repo> y yum --disablerepo=<patrón_repo>, se pueden usar combinados para determinar el paquete exacto que queramos, de forma temporal para esa ejecución.
+   * `yum-config-manager --add-rep=<url>`, genera un fichero de repositorio basándose en la URL que le hemos pasado, una vez que tenemos el fichero, podemos manipularlo.
+* `rpm --import <url_clave>`
+* `yum --enablerepo=<patrón_repo>` y `yum --disablerepo=<patrón_repo>`, se pueden usar combinados para determinar el paquete exacto que queramos, de forma temporal para esa ejecución.
+https://github.com/JHicarArmendariz/Chuletas
+## RPM
 
-
-   
-
+Esto no nos resuelve dependencias así que ojito, mejor usar yum.
+* Para ver lo que tenemos instalado: `rpm -qa  |grep httpd`
+* `rpm -qf <fichero>` --> nos da las dependencias, trabaja en local, por loq ue si no tenemos el paqeute que provee el fichero, no nos devolverá nada.
+* `rpm -qp <paquete_local>.rpm` --> Nos muestra el paquete
+* `rpm -ql paquete` -- contenidos de un paquete instalado (añadir la -p si lo tenemos en local)
+     - esto se usa para saber qué nos va a instalar el paquete (rpm -qlp paquete.rpm)
+* `rpm -ivh <paquete>` -- nos instala el paquete
+* `rpm -qdp <paquete>.rpm` -- nos dice lo que nos va a instalar de documentación un paquete local (sin la p, es de un paquete instalado)
+   - c = ficheros de configuración
+* `rpm -q --scripts <paquete>` -- Nos dice qué scripts nos va a ejecutar
+* `rpm2cpio paquete.rpm |cpio -id "*txt"` nos saca del paquete, todos los ficheros especificados con el filtro del cpio
