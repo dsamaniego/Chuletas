@@ -1155,7 +1155,7 @@ Si subscribimos un sistema, se configura automáticamente el acceso a los reposi
 
 Comandos informativos:
 * yum help
-* yum ist 'http*' - saca todo lo relacionado con http
+* yum list 'http*' - saca todo lo relacionado con http
 * yum search <palabra> - busca en los campos nombre y resumen
 * yum search all <keyword> - busca en nombre, resumen y descripción
 * yum info nombre_paquete - Saca información del paquete
@@ -1196,4 +1196,17 @@ Todo lo referente a lo que ha hecho yum está en `/var/log/yum.log`
 Además, tenemos un historial de lo que se ha hecho. `yum history`, que podemos consultar la paquetería que hemos isntalado.
 
 Podemos deshacer operaciones hechas desde el _yum history_
- 
+
+## Repositorios
+
+yum repo list all --> devuelve lalista de todos los repositorios
+yum-config-manager --> utilidad para manipular los repositorios que tenemos.
+   * yum-config-manager --{enable|disable} <repositorio> --> nos habilita este respositorio (en el fich de config, mete un _enabled=1_)
+Podemos configurar repositorios de terceros editando un fichero *.repo en `/etc/yum.repos.d/*.repo`
+   * yum-config-manager --add-rep=<url>, genera un fichero de repositorio basándose en la URL que le hemos pasado, una vez que tenemos el fichero, podemos manipularlo.
+* rpm --import <url_clave>
+* yum --enablerepo=<patrón_repo> y yum --disablerepo=<patrón_repo>, se pueden usar combinados para determinar el paquete exacto que queramos, de forma temporal para esa ejecución.
+
+
+   
+
