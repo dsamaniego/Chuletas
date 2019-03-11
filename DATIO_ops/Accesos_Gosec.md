@@ -2,6 +2,8 @@
 
 Se ha habilitado el acceso a vault a través de login con ldap, de momento está en pruebas en work01es y priv02gl.
 
+export TOKEN=$(curl -s --request POST --data '{"password":"'$(cat mipass_work_es)'"}' https://vault.service.eos.$(dnsdomainname):8200/v1/auth/ldap/login/$(whoami) | jq -r .auth.client_token)
+
 Os paso resumen con la operativa para login con ldap:
 
 Desde gosec1,2,3 con CLI:
