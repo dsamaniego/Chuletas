@@ -32,9 +32,19 @@ restart_service.yml
 
 ## Reinicio de la máquinas gosec
 
+Normalmente si está todo jodido, suele ser o por el NTP o por el NetworkManager, así que normalmente con reiniciarlo normalmente bastará para que arranquen todas las piezas (menos seguramente vault). 
+
+Si hay que hacerlo a mano.
+- Si tenemos parado kafka, primero habrá que reiniciar zookeeper-kafka, con esto, levantará kafka casi seguro.
+- Despues arrancaremos zookeeper-gosec
+
+Seguimos con los arranques en el punto 3.
+
 Por ese orden.
 1. paro vault
 2. paro zookeper-gosec
 3. arranco zookeper-gosec
 4. arranco vault
-5. me conecto a Iluvatar y desello con el playbook ()
+5. me conecto a Iluvatar y desello con el playbook ([root@daas-usa-live-01 ansible]# touch /environment/.inventory_cache && ansible-playbook ./operations/unseal_vault.yml )
+
+
