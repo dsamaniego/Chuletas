@@ -10,6 +10,9 @@
 ## Comandos útiles
 
 ### Ver los logs de un servicio.
-`# journalctl -fu <servicio>`
 
+`journalctl -fu <servicio>`
 
+### Quitar las extensiones de ficheros
+
+`for i in *.ext; do mv $i $(echo $i|awk -F '.' '{ print $1 }'); done`

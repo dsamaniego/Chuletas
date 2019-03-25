@@ -2,6 +2,8 @@
 
 Se ha habilitado el acceso a vault a través de login con ldap, de momento está en pruebas en work01es y priv02gl.
 
+export TOKEN=$(curl -s --request POST --data '{"password":"'$(cat mipass_work_es)'"}' https://vault.service.eos.$(dnsdomainname):8200/v1/auth/ldap/login/$(whoami) | jq -r .auth.client_token)
+
 Os paso resumen con la operativa para login con ldap:
 
 Desde gosec1,2,3 con CLI:
@@ -42,3 +44,7 @@ Operar con el token:
 curl -s --request LIST -H "X-Vault-Token: ${TOKEN}" https://vault.service.eos.$(dnsdomainname):8200/v1/ca-trust/certificates | jq -r .data.keys
 
 Si necesitamos escribir alguna clave la idea es la misma. Escribirlas en un fichero local, copiarlo al entorno y desde allí hacer source del fichero. Una vez las tenemos como variables de entorno, podemos escribirlas sin necesidad de mostrarlas.
+
+## De donde sacar el token de root.
+
+En los contenedores de ilúvatar de cada entorno, está en `/environment/pass/vault/vault_secrets.yml`
