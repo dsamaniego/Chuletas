@@ -47,4 +47,11 @@ Por ese orden.
 4. arranco vault
 5. me conecto a Iluvatar y desello con el playbook ([root@daas-usa-live-01 ansible]# touch /environment/.inventory_cache && ansible-playbook ./operations/unseal_vault.yml )
 
+Para sacar el Token: [root@daas-mx-work-01 iluvatar]# cat /environment/pass/vault/vault_secrets.yml 
 
+Si no funciona vault: export PATH=$PATH:/opt/stratio/vault/bin
+
+## Rutas útiles.
+
+Podremos encontrar el usuario y la pass de Gerrit en vault:  
+`vault read platform/<pais>/<entorno>/datio/gerrit/gerrit/ldap_service`

@@ -1,5 +1,12 @@
 # Funcinamiento de la plataforma
 
+## Encontrar los líderes de cada servicio.
+
+* El más importante, lider de mesos: desde cualquier agente: `ping leader.mesos`
+* El más pesado, el lider de metronome (el que más veces hay que reiniciar): `ping metronome.mesos`
+* El de marathon: `ping marathon.mesos`
+* El de spartan (es lo primero que se inciia cuando se inicia la platafoarma): `ping ready.spartan`
+
 ## Metronome
 
 Coordina la ejecución de los jobs.

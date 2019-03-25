@@ -44,3 +44,7 @@ Operar con el token:
 curl -s --request LIST -H "X-Vault-Token: ${TOKEN}" https://vault.service.eos.$(dnsdomainname):8200/v1/ca-trust/certificates | jq -r .data.keys
 
 Si necesitamos escribir alguna clave la idea es la misma. Escribirlas en un fichero local, copiarlo al entorno y desde allí hacer source del fichero. Una vez las tenemos como variables de entorno, podemos escribirlas sin necesidad de mostrarlas.
+
+## De donde sacar el token de root.
+
+En los contenedores de ilúvatar de cada entorno, está en `/environment/pass/vault/vault_secrets.yml`
