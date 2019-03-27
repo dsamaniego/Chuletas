@@ -21,8 +21,10 @@ Una vez aquí podemos ejecutar comandos de postgresSQL y de SQL.
 * **\c _<dd.bb.>_**: Conectarse a la base de datos
 * **set search_path to _database_**: Hacer consultas en una base de datoss concreta (una vez aquí, podemos usar los comandos estándar de SQL)
 * **\dt** Listar las tablas de la base de datos actual
-* **\d _tabla_**: descripción de laos camos de la tabla (_\dt+ tabla_ devuelve más informaciónd)
+* **\d _tabla_**: descripción de laos camos de la tabla (_\dt+ tabla_ devuelve más información)
 * **\q**: salir del postgres
+* **\pset pager off**: Quita el paginado en los resultados de las querys.
+
 
 ## Operativas en la plataforma
 
