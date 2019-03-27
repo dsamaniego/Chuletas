@@ -6,8 +6,6 @@
 curl -k -v -u <user>:<pass> --upload-file <fichero> https://nexus.daas.work.es.ether.igrupobbva/repository/<ruta>/<fichero>
 ~~~
 
-Aquí, cambiar el entorno y el país por el adecuado.
-
 ## Desplegar con soyuz
 
 Necesitamos la password del usuario _oper_
