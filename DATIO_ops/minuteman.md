@@ -1,6 +1,9 @@
-# Minuteman
+- [Chequear Minuteman](#chequear-minuteman)
+  - [Ver qué ip resuelve minuteman](#ver-qué-ip-resuelve-minuteman)
+- [Degradación de minuteman](#degradación-de-minuteman)
 
-## Para chequearlo:  
+# Chequear Minuteman
+
 `touch /environment/.inventory_cache && ansible -m shell -a 'curl -k https://soyuz.marathon.l4lb.thisdcos.directory/v1/ping' dcos_agent_private`
     Asi vemos si está funcionando bien.
 
@@ -27,8 +30,8 @@ Ahora bien, esto está en la rama "devel" de Iluvatar, por lo que no está despl
 
 Hay una alerta reactiva que reinicia el minuteman cuando está caido o no responde:
 
-~~~ bash
-[root@agent-2 PRIV02 cloud-user]# curl http://localhost:61421 -v
+``` bash
+[root@agent-2 PRIV02 cloud-user]# curl http://localhost:61421/ -v
 * Rebuilt URL to: http://localhost:61421/
 *   Trying 127.0.0.1...
 * Connected to localhost (127.0.0.1) port 61421 (#0)
@@ -39,32 +42,37 @@ Hay una alerta reactiva que reinicia el minuteman cuando está caido o no respon
 >
 < HTTP/1.1 200 OK
 < Vary: Accept
-~~~
+```
 
-## Degradación de minuteman
+## Ver qué ip resuelve minuteman
+
+Hacemos un ping al nombre para ver qué vip tiene:
+
+```bash
+ping -c1 master.pgprocess.l4lb.$(dnsdomainname)
+PING master.pgprocess.l4lb.thisdcos.directory (11.93.165.44) 56(84) bytes of data.
+```
+
+Y a continuación sacamos el listado de las vips que gestiona minuteman
+
+```bash
+curl -s http://localhost:61421/vips | jq
+{
+  "vips": {
+    "11.167.173.57:5432": {
+      "192.168.192.56:{{192,168,192,56},1025}": {
+        "is_healthy": true,
+        "latency_last_60s": {},
+        "pending_connections": 0,
+        "total_failures": 0,
+        "total_sucesses": 0
+      }
+    },
+[...]
+```
+
+# Degradación de minuteman
 
 Se está observando que minuteman se degrada, lo que trae como consecuencia que haya jobs que no vayan cuando se lanzan. 
 
 Sospecha a confirmar, cuando se están levantando los agentes relacionados con la actualización de las AZs, minuteman no se reconfigura bien en esos agentes y empieza la degradación.
-
-### Chequeo para el lunes
-
-Hacer el chequeo de minuteman y ver si los agentes en los que falla pertenecen a la AZ3 que es la que se va a actualizar este fin de semana.
-
-No ha fallado en ninguno, he probado por 4 veces en cada entorno de live el comando de ping.
-
-#### Mas cosas
-
-Discovery de FINA y minuteman.
-
-En LIVE-GL falla discovery en la conexión a la BD, está mirando arquitectura.
-
-han cambiado dos parámetros en el descritpro:
- "MB_DB_HOST": "master.pgsandbox.l4lb.live01.daas.gl.igrupobbva",
- "MB_DB_PORT": "5432",
-
-Por: 
- "MB_DB_HOST": "pg-0001.pgsandbox.mss.live01.daas.gl.igrupobbva",
- "MB_DB_PORT": "1025"
-
- para recordarlo.
