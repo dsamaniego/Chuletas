@@ -1,10 +1,16 @@
 # CURLS varios.
 
-## Subir a Nexus
+## Nexus
 
+### Subir
 ~~~bash
 curl -k -v -u <user>:<pass> --upload-file <fichero> https://nexus.daas.work.es.ether.igrupobbva/repository/<ruta>/<fichero>
 ~~~
+
+### bajar
+```bash
+curl -k -o fichero https://nexus.daas.live.es.ether.igrupobbva/repository/things/<ruta>/<fichero>
+```
 
 ## Desplegar con soyuz
 

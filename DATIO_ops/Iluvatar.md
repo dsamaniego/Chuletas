@@ -48,6 +48,9 @@ para pasar una etiqueta de ilúvatar a una granja concreta:
 si queremos antes de hacer la cosa chequear, poner los flags: --check --diff
 
 ## Utilidades Operaciones.
-
+1Gjjk
 Si queremos ejecutar algo desde los bootstrap conectándonos desde ilúvatar, hay que pasar la llave del entorno:  
-`ssh -F ssh_config bootstrap-1 -Ai /environment/pki/keypair.key`
+```bash
+cd deployer/ansible
+source ../../entrypoint.sh && ssh -F ssh_config bootstrap-1 -Ai /environment/pki/keypair.key
+```
