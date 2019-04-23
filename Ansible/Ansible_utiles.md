@@ -5,6 +5,9 @@ Siempre que vayamos a lanzar un playbook o un ansible conviene que toquemos el i
 ```bash
 touch /environment/.inventory_cache && <comando_ansible>
 ```
+## Regenerar el inventario dinámico
+
+```./ansible_hosts -l```
 
 ## Regenerar la red de los servidores.
 ```bash
